@@ -1,0 +1,4 @@
+# This file is loaded for all environments
+kernel:
+    resource: ../src/Kernel.php
+    type: attribute

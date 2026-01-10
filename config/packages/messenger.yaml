@@ -1,0 +1,33 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            sync: 'sync://'
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    auto_setup: true
+            failed: 'doctrine://default?queue_name=failed'
+            # async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            # failed: 'doctrine://default?queue_name=failed'
+            # sync: 'sync://'
+
+        routing:
+            # Post Commands
+            'App\Api\Application\Post\Command\CreatePostCommand': sync
+            'App\Api\Application\Post\Command\PublishPostCommand': sync
+
+            # Post Queries
+            'App\Api\Application\Post\Query\ListPostsQuery': sync
+            'App\Api\Application\Post\Query\GetPostQuery': sync
+
+            # User Commands
+            'App\Api\Application\User\Command\RegisterUserCommand': sync
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                async: 'in-memory://'
