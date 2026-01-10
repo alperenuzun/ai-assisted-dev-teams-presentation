@@ -1,0 +1,256 @@
+name: Code Refactoring Workflow
+description: Safe and systematic code refactoring with comprehensive testing
+version: 1.0.0
+
+triggers:
+  - type: manual
+    command: /refactor
+  - type: scheduled
+    cron: "0 0 * * MON"  # Weekly on Monday
+    condition: technical_debt_score > threshold
+
+inputs:
+  - name: target_module
+    description: Module or component to refactor
+    required: true
+
+  - name: refactoring_goal
+    description: Purpose of refactoring
+    enum: [performance, readability, maintainability, architecture, remove-duplication, simplify]
+    required: true
+
+  - name: scope
+    description: Scope of refactoring
+    enum: [function, class, module, service, full-feature]
+    required: true
+
+workflow:
+  - stage: Analysis
+    agent: architect
+    description: Analyze current code and plan refactoring
+    tasks:
+      - name: code_analysis
+        action: |
+          Analyze current code structure and quality.
+          Identify code smells and technical debt.
+          Review complexity metrics (cyclomatic, cognitive).
+
+      - name: dependency_analysis
+        action: |
+          Map dependencies and usage of target code.
+          Identify all modules that depend on this code.
+          Check for circular dependencies.
+
+      - name: create_refactoring_plan
+        action: |
+          Design new structure and architecture.
+          Plan incremental refactoring steps.
+          Identify risks and mitigation strategies.
+
+    outputs:
+      - analysis-report.md
+      - refactoring-plan.md
+      - dependency-graph.svg
+
+  - stage: Preparation
+    agent: qa-tester
+    tasks:
+      - name: ensure_test_coverage
+        action: |
+          Verify existing test coverage for target code.
+          Add missing tests before refactoring.
+          Ensure coverage >80% before proceeding.
+
+      - name: create_characterization_tests
+        action: |
+          Write tests that document current behavior.
+          Test edge cases and error conditions.
+          These tests will ensure behavior doesn't change.
+
+      - name: baseline_tests
+        action: |
+          Run all tests and record results.
+          npm test -- --coverage
+          Save baseline for comparison.
+
+    outputs:
+      - baseline-test-results.json
+      - baseline-coverage.json
+      - characterization-tests/
+
+  - stage: Refactoring Implementation
+    description: Perform actual refactoring in small, safe steps
+    tasks:
+      - name: create_refactoring_branch
+        action: |
+          git checkout -b refactor/{{target_module}}
+
+      - name: incremental_refactoring
+        action: |
+          Perform refactoring in small, testable increments.
+          Each step should:
+          1. Make one logical change
+          2. Run tests after each change
+          3. Commit if tests pass
+          4. Rollback if tests fail
+
+          Common refactoring techniques:
+          - Extract function/method
+          - Extract class
+          - Rename for clarity
+          - Remove duplication
+          - Simplify conditional logic
+          - Introduce design patterns
+          - Split large files/functions
+
+      - name: run_tests_continuously
+        action: |
+          npm test -- --watch
+          Continuously run tests during refactoring.
+          Stop immediately if any test fails.
+
+    outputs:
+      - Refactored source files
+
+  - stage: Quality Verification
+    tasks:
+      - name: compare_test_results
+        action: |
+          Run full test suite.
+          Compare with baseline results.
+          Ensure all tests still pass.
+          Verify coverage maintained or improved.
+
+      - name: code_quality_metrics
+        action: |
+          Run static analysis tools.
+          Check complexity metrics.
+          Verify improvement in:
+          - Cyclomatic complexity
+          - Code duplication
+          - Lines of code
+          - Maintainability index
+
+      - name: performance_comparison
+        condition: refactoring_goal === 'performance'
+        action: |
+          Run performance benchmarks.
+          Compare with baseline performance.
+          Verify performance improvement.
+
+    outputs:
+      - test-comparison.md
+      - quality-metrics.json
+      - performance-benchmarks.json
+
+  - stage: Code Review
+    agent: code-reviewer
+    tasks:
+      - name: review_changes
+        action: |
+          Review refactored code for:
+          - Improved readability
+          - Better structure
+          - Maintained functionality
+          - No introduced bugs
+          - Consistent style
+
+      - name: verify_goals_met
+        action: |
+          Verify refactoring achieved stated goals.
+          Check if code is more maintainable.
+          Confirm improved quality metrics.
+
+    outputs:
+      - review-feedback.md
+
+  - stage: Documentation
+    tasks:
+      - name: update_documentation
+        action: |
+          Update code comments and documentation.
+          Document new architecture/structure.
+          Update architectural diagrams if needed.
+
+      - name: document_changes
+        action: |
+          Create summary of changes made.
+          Explain rationale for key decisions.
+          Document any breaking changes.
+
+    outputs:
+      - REFACTORING.md
+      - Updated architecture docs
+
+  - stage: Integration
+    tasks:
+      - name: merge_preparation
+        action: |
+          Rebase on main branch.
+          Resolve any conflicts.
+          Run full test suite one final time.
+
+      - name: update_dependents
+        action: |
+          Update all code that depends on refactored code.
+          Fix any breaking changes.
+          Update imports and references.
+
+      - name: final_validation
+        action: |
+          npm run lint
+          npm run type-check
+          npm run test:all
+          npm run build
+          All must pass before PR.
+
+  - stage: Pull Request
+    tasks:
+      - name: create_pr
+        action: |
+          Create PR with detailed refactoring summary.
+          Include before/after metrics.
+          Link to refactoring plan.
+
+      - name: pr_checklist
+        checklist:
+          - All tests passing (same or better coverage)
+          - No change in external behavior
+          - Code quality metrics improved
+          - Documentation updated
+          - No breaking changes (or documented)
+          - Performance maintained or improved
+          - Team members reviewed refactoring plan
+
+notifications:
+  on_success:
+    - type: comment
+      message: |
+        Refactoring completed successfully!
+        - Tests: All passing
+        - Coverage: Maintained/improved
+        - Quality: Improved
+        - PR ready for review
+
+  on_failure:
+    - type: comment
+      message: "Refactoring failed validation. Rolling back changes."
+    - action: rollback
+
+safety_checks:
+  - name: test_failure_abort
+    condition: any test fails
+    action: Stop and rollback
+
+  - name: coverage_decrease_abort
+    condition: coverage < baseline - 5%
+    action: Stop and rollback
+
+  - name: performance_regression_abort
+    condition: performance_degradation > 10%
+    action: Stop and rollback
+
+rollback:
+  - git reset --hard origin/main
+  - npm install
+  - Restore baseline

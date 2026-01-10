@@ -1,0 +1,222 @@
+name: E2E Test Suite Creator
+description: Creates end-to-end test scenarios using Playwright or Cypress
+version: 1.0.0
+
+inputs:
+  - name: feature_name
+    type: string
+    description: Feature being tested (e.g., "user-login")
+    required: true
+
+  - name: test_framework
+    type: string
+    description: E2E testing framework
+    required: true
+    enum: [playwright, cypress]
+
+  - name: user_flows
+    type: array
+    description: User workflows to test
+    required: true
+
+  - name: test_data
+    type: object
+    description: Test data for scenarios
+    required: false
+
+  - name: authentication_required
+    type: boolean
+    description: Whether tests need authentication setup
+    default: false
+
+steps:
+  - name: Create Playwright test suite
+    condition: test_framework === 'playwright'
+    description: Generate Playwright E2E tests
+    template: |
+      import { test, expect, Page } from '@playwright/test';
+
+      test.describe('{{feature_name}}', () => {
+        let page: Page;
+
+        test.beforeEach(async ({ page: testPage }) => {
+          page = testPage;
+          {{#if authentication_required}}
+          // Setup authentication
+          await page.goto('/login');
+          await page.fill('[name="email"]', '{{test_data.email}}');
+          await page.fill('[name="password"]', '{{test_data.password}}');
+          await page.click('[type="submit"]');
+          await page.waitForURL('/dashboard');
+          {{else}}
+          await page.goto('/');
+          {{/if}}
+        });
+
+        {{#each user_flows}}
+        test('{{this.name}}', async () => {
+          // {{this.description}}
+
+          {{#each this.steps}}
+          // Step: {{this.description}}
+          {{#if this.action === 'click'}}
+          await page.click('{{this.selector}}');
+          {{else if this.action === 'fill'}}
+          await page.fill('{{this.selector}}', '{{this.value}}');
+          {{else if this.action === 'select'}}
+          await page.selectOption('{{this.selector}}', '{{this.value}}');
+          {{else if this.action === 'wait'}}
+          await page.waitForSelector('{{this.selector}}');
+          {{else if this.action === 'navigate'}}
+          await page.goto('{{this.url}}');
+          {{/if}}
+
+          {{/each}}
+
+          {{#each this.assertions}}
+          // Assert: {{this.description}}
+          {{#if this.type === 'visible'}}
+          await expect(page.locator('{{this.selector}}')).toBeVisible();
+          {{else if this.type === 'text'}}
+          await expect(page.locator('{{this.selector}}')).toHaveText('{{this.expected}}');
+          {{else if this.type === 'url'}}
+          await expect(page).toHaveURL('{{this.expected}}');
+          {{else if this.type === 'count'}}
+          await expect(page.locator('{{this.selector}}')).toHaveCount({{this.expected}});
+          {{/if}}
+          {{/each}}
+        });
+
+        {{/each}}
+
+        test.afterEach(async () => {
+          {{#if authentication_required}}
+          // Cleanup: logout
+          await page.click('[data-testid="logout-button"]');
+          {{/if}}
+        });
+      });
+
+  - name: Create Cypress test suite
+    condition: test_framework === 'cypress'
+    description: Generate Cypress E2E tests
+    template: |
+      describe('{{feature_name}}', () => {
+        beforeEach(() => {
+          {{#if authentication_required}}
+          // Setup authentication
+          cy.visit('/login');
+          cy.get('[name="email"]').type('{{test_data.email}}');
+          cy.get('[name="password"]').type('{{test_data.password}}');
+          cy.get('[type="submit"]').click();
+          cy.url().should('include', '/dashboard');
+          {{else}}
+          cy.visit('/');
+          {{/if}}
+        });
+
+        {{#each user_flows}}
+        it('{{this.name}}', () => {
+          // {{this.description}}
+
+          {{#each this.steps}}
+          // Step: {{this.description}}
+          {{#if this.action === 'click'}}
+          cy.get('{{this.selector}}').click();
+          {{else if this.action === 'fill'}}
+          cy.get('{{this.selector}}').type('{{this.value}}');
+          {{else if this.action === 'select'}}
+          cy.get('{{this.selector}}').select('{{this.value}}');
+          {{else if this.action === 'wait'}}
+          cy.get('{{this.selector}}').should('be.visible');
+          {{else if this.action === 'navigate'}}
+          cy.visit('{{this.url}}');
+          {{/if}}
+
+          {{/each}}
+
+          {{#each this.assertions}}
+          // Assert: {{this.description}}
+          {{#if this.type === 'visible'}}
+          cy.get('{{this.selector}}').should('be.visible');
+          {{else if this.type === 'text'}}
+          cy.get('{{this.selector}}').should('have.text', '{{this.expected}}');
+          {{else if this.type === 'url'}}
+          cy.url().should('include', '{{this.expected}}');
+          {{else if this.type === 'count'}}
+          cy.get('{{this.selector}}').should('have.length', {{this.expected}});
+          {{/if}}
+          {{/each}}
+        });
+
+        {{/each}}
+
+        afterEach(() => {
+          {{#if authentication_required}}
+          // Cleanup: logout
+          cy.get('[data-testid="logout-button"]').click();
+          {{/if}}
+        });
+      });
+
+  - name: Create test fixtures
+    description: Generate test data fixtures
+    template: |
+      export const {{feature_name}}Fixtures = {
+        {{#each test_data}}
+        {{@key}}: {{json this}},
+        {{/each}}
+      };
+
+  - name: Create Page Object Model
+    description: Generate POM for better test organization
+    template: |
+      {{#if test_framework === 'playwright'}}
+      import { Page, Locator } from '@playwright/test';
+
+      export class {{feature_name | pascalCase}}Page {
+        readonly page: Page;
+        {{#each selectors}}
+        readonly {{this.name}}: Locator;
+        {{/each}}
+
+        constructor(page: Page) {
+          this.page = page;
+          {{#each selectors}}
+          this.{{this.name}} = page.locator('{{this.selector}}');
+          {{/each}}
+        }
+
+        async navigate() {
+          await this.page.goto('{{base_url}}');
+        }
+
+        // Add helper methods for common actions
+      }
+      {{else}}
+      export class {{feature_name | pascalCase}}Page {
+        {{#each selectors}}
+        get {{this.name}}() {
+          return cy.get('{{this.selector}}');
+        }
+        {{/each}}
+
+        visit() {
+          cy.visit('{{base_url}}');
+        }
+
+        // Add helper methods for common actions
+      }
+      {{/if}}
+
+post_execution:
+  - action: run_e2e_tests
+    command: npm run test:e2e -- {{feature_name}}
+
+  - action: generate_report
+    command: npm run test:report
+
+outputs:
+  - test_file: e2e/{{feature_name}}.spec.ts
+  - fixtures_file: e2e/fixtures/{{feature_name}}.fixtures.ts
+  - page_object_file: e2e/pages/{{feature_name}}.page.ts

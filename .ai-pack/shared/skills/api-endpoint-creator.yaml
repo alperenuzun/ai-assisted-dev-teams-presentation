@@ -1,0 +1,163 @@
+name: API Endpoint Creator
+description: Creates a complete REST API endpoint with validation, error handling, and tests
+version: 1.0.0
+
+inputs:
+  - name: resource_name
+    type: string
+    description: Name of the resource (e.g., "user", "product")
+    required: true
+
+  - name: http_method
+    type: string
+    description: HTTP method (GET, POST, PUT, DELETE, PATCH)
+    required: true
+    enum: [GET, POST, PUT, DELETE, PATCH]
+
+  - name: route_path
+    type: string
+    description: API route path (e.g., "/api/users/:id")
+    required: true
+
+  - name: request_body_schema
+    type: object
+    description: JSON schema for request body validation
+    required: false
+
+  - name: authentication_required
+    type: boolean
+    description: Whether endpoint requires authentication
+    default: true
+
+steps:
+  - name: Create route handler
+    description: Generate Express route handler with proper error handling
+    template: |
+      const express = require('express');
+      const router = express.Router();
+      const { validate } = require('../middleware/validation');
+      const { authenticate } = require('../middleware/auth');
+
+      router.{{http_method | lowercase}}('{{route_path}}',
+        {{#if authentication_required}}authenticate,{{/if}}
+        {{#if request_body_schema}}validate({{resource_name}}Schema),{{/if}}
+        async (req, res, next) => {
+          try {
+            // TODO: Implement business logic
+            res.status(200).json({ success: true });
+          } catch (error) {
+            next(error);
+          }
+        }
+      );
+
+      module.exports = router;
+
+  - name: Create validation schema
+    condition: request_body_schema is not empty
+    description: Generate validation schema using Joi or Zod
+    template: |
+      const Joi = require('joi');
+
+      const {{resource_name}}Schema = Joi.object({
+        {{#each request_body_schema}}
+        {{@key}}: Joi.{{this.type}}(){{#if this.required}}.required(){{/if}},
+        {{/each}}
+      });
+
+      module.exports = { {{resource_name}}Schema };
+
+  - name: Create unit tests
+    description: Generate Jest tests for the endpoint
+    template: |
+      const request = require('supertest');
+      const app = require('../app');
+
+      describe('{{http_method}} {{route_path}}', () => {
+        it('should return 200 for valid request', async () => {
+          const response = await request(app)
+            .{{http_method | lowercase}}('{{route_path}}')
+            {{#if authentication_required}}
+            .set('Authorization', 'Bearer valid-token')
+            {{/if}}
+            {{#if request_body_schema}}
+            .send({ /* valid data */ })
+            {{/if}}
+            .expect(200);
+
+          expect(response.body.success).toBe(true);
+        });
+
+        {{#if authentication_required}}
+        it('should return 401 without authentication', async () => {
+          await request(app)
+            .{{http_method | lowercase}}('{{route_path}}')
+            .expect(401);
+        });
+        {{/if}}
+
+        {{#if request_body_schema}}
+        it('should return 400 for invalid request body', async () => {
+          await request(app)
+            .{{http_method | lowercase}}('{{route_path}}')
+            {{#if authentication_required}}
+            .set('Authorization', 'Bearer valid-token')
+            {{/if}}
+            .send({ /* invalid data */ })
+            .expect(400);
+        });
+        {{/if}}
+      });
+
+  - name: Create API documentation
+    description: Generate OpenAPI/Swagger documentation
+    template: |
+      /**
+       * @swagger
+       * {{route_path}}:
+       *   {{http_method | lowercase}}:
+       *     summary: {{http_method}} {{resource_name}}
+       *     tags: [{{resource_name | capitalize}}]
+       *     {{#if authentication_required}}
+       *     security:
+       *       - bearerAuth: []
+       *     {{/if}}
+       *     {{#if request_body_schema}}
+       *     requestBody:
+       *       required: true
+       *       content:
+       *         application/json:
+       *           schema:
+       *             type: object
+       *             properties:
+       *               {{#each request_body_schema}}
+       *               {{@key}}:
+       *                 type: {{this.type}}
+       *               {{/each}}
+       *     {{/if}}
+       *     responses:
+       *       200:
+       *         description: Success
+       *       400:
+       *         description: Bad request
+       *       401:
+       *         description: Unauthorized
+       *       500:
+       *         description: Server error
+       */
+
+post_execution:
+  - action: run_tests
+    command: npm test -- {{resource_name}}.test.js
+
+  - action: lint
+    command: npm run lint -- --fix
+
+  - action: format
+    command: npm run format
+
+outputs:
+  - route_file: src/routes/{{resource_name}}.routes.js
+  - schema_file: src/schemas/{{resource_name}}.schema.js
+  - test_file: src/tests/{{resource_name}}.test.js
+  - docs_file: src/docs/{{resource_name}}.docs.js

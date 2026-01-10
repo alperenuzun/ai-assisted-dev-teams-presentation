@@ -1,0 +1,233 @@
+name: React Component Builder
+description: Creates a production-ready React component with TypeScript, tests, and Storybook stories
+version: 1.0.0
+
+inputs:
+  - name: component_name
+    type: string
+    description: Name of the component (PascalCase)
+    required: true
+
+  - name: component_type
+    type: string
+    description: Type of component
+    required: true
+    enum: [presentational, container, layout, form, data-display]
+
+  - name: props
+    type: array
+    description: Component props with types
+    required: false
+
+  - name: state_management
+    type: string
+    description: State management approach
+    enum: [useState, useReducer, context, redux, zustand, none]
+    default: useState
+
+  - name: styling_approach
+    type: string
+    description: Styling method
+    enum: [css-modules, styled-components, emotion, tailwind]
+    default: css-modules
+
+  - name: accessibility_required
+    type: boolean
+    description: Include accessibility features
+    default: true
+
+steps:
+  - name: Create component file
+    description: Generate TypeScript React component
+    template: |
+      import React{{#if state_management !== 'none'}}, { {{state_management}} }{{/if}} from 'react';
+      {{#if styling_approach === 'styled-components'}}
+      import styled from 'styled-components';
+      {{else if styling_approach === 'css-modules'}}
+      import styles from './{{component_name}}.module.css';
+      {{/if}}
+
+      export interface {{component_name}}Props {
+        {{#each props}}
+        {{this.name}}{{#unless this.required}}?{{/unless}}: {{this.type}};
+        {{/each}}
+      }
+
+      /**
+       * {{component_name}} component
+       * @description {{component_type}} component
+       */
+      export const {{component_name}}: React.FC<{{component_name}}Props> = ({
+        {{#each props}}
+        {{this.name}}{{#if this.defaultValue}} = {{this.defaultValue}}{{/if}},
+        {{/each}}
+      }) => {
+        {{#if state_management === 'useState'}}
+        const [state, setState] = useState(initialState);
+        {{else if state_management === 'useReducer'}}
+        const [state, dispatch] = useReducer(reducer, initialState);
+        {{/if}}
+
+        return (
+          <div
+            {{#if styling_approach === 'css-modules'}}
+            className={styles.container}
+            {{/if}}
+            {{#if accessibility_required}}
+            role="{{component_type}}"
+            aria-label="{{component_name}}"
+            {{/if}}
+          >
+            {/* Component content */}
+          </div>
+        );
+      };
+
+      {{#if styling_approach === 'styled-components'}}
+      const Container = styled.div`
+        /* Component styles */
+      `;
+      {{/if}}
+
+      {{component_name}}.displayName = '{{component_name}}';
+
+  - name: Create TypeScript types
+    description: Generate type definitions
+    template: |
+      export interface {{component_name}}Props {
+        {{#each props}}
+        /**
+         * {{this.description}}
+         */
+        {{this.name}}{{#unless this.required}}?{{/unless}}: {{this.type}};
+        {{/each}}
+      }
+
+      {{#if state_management !== 'none'}}
+      export interface {{component_name}}State {
+        // Define state interface
+      }
+      {{/if}}
+
+  - name: Create test file
+    description: Generate React Testing Library tests
+    template: |
+      import React from 'react';
+      import { render, screen, fireEvent } from '@testing-library/react';
+      import '@testing-library/jest-dom';
+      import { {{component_name}} } from './{{component_name}}';
+
+      describe('{{component_name}}', () => {
+        const defaultProps = {
+          {{#each props}}
+          {{this.name}}: {{this.testValue}},
+          {{/each}}
+        };
+
+        it('renders without crashing', () => {
+          render(<{{component_name}} {...defaultProps} />);
+          expect(screen.getByRole('{{component_type}}')).toBeInTheDocument();
+        });
+
+        {{#if accessibility_required}}
+        it('is accessible', () => {
+          const { container } = render(<{{component_name}} {...defaultProps} />);
+          expect(container.querySelector('[role="{{component_type}}"]')).toBeInTheDocument();
+        });
+        {{/if}}
+
+        {{#each props}}
+        {{#if this.testable}}
+        it('handles {{this.name}} prop correctly', () => {
+          render(<{{../component_name}} {...defaultProps} {{this.name}}={{this.testValue}} />);
+          // Add specific assertions
+        });
+        {{/if}}
+        {{/each}}
+
+        // Add more tests for user interactions, state changes, etc.
+      });
+
+  - name: Create Storybook stories
+    description: Generate Storybook documentation
+    template: |
+      import type { Meta, StoryObj } from '@storybook/react';
+      import { {{component_name}} } from './{{component_name}}';
+
+      const meta: Meta<typeof {{component_name}}> = {
+        title: 'Components/{{component_name}}',
+        component: {{component_name}},
+        tags: ['autodocs'],
+        argTypes: {
+          {{#each props}}
+          {{this.name}}: {
+            description: '{{this.description}}',
+            control: '{{this.controlType}}',
+          },
+          {{/each}}
+        },
+      };
+
+      export default meta;
+      type Story = StoryObj<typeof {{component_name}}>;
+
+      export const Default: Story = {
+        args: {
+          {{#each props}}
+          {{this.name}}: {{this.defaultValue}},
+          {{/each}}
+        },
+      };
+
+      {{#if component_type === 'form'}}
+      export const Filled: Story = {
+        args: {
+          // Pre-filled form values
+        },
+      };
+
+      export const WithErrors: Story = {
+        args: {
+          // Error states
+        },
+      };
+      {{/if}}
+
+  - name: Create CSS module
+    condition: styling_approach === 'css-modules'
+    description: Generate CSS module file
+    template: |
+      .container {
+        /* Base styles */
+      }
+
+      .container--variant {
+        /* Variant styles */
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          /* Responsive styles */
+        }
+      }
+
+post_execution:
+  - action: run_tests
+    command: npm test -- {{component_name}}.test.tsx
+
+  - action: type_check
+    command: npx tsc --noEmit
+
+  - action: lint
+    command: npm run lint -- --fix
+
+  - action: storybook
+    command: npm run storybook
+
+outputs:
+  - component_file: src/components/{{component_name}}/{{component_name}}.tsx
+  - types_file: src/components/{{component_name}}/{{component_name}}.types.ts
+  - test_file: src/components/{{component_name}}/{{component_name}}.test.tsx
+  - story_file: src/components/{{component_name}}/{{component_name}}.stories.tsx
+  - style_file: src/components/{{component_name}}/{{component_name}}.module.css
+  - index_file: src/components/{{component_name}}/index.ts

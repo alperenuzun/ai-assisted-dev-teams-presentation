@@ -1,0 +1,216 @@
+name: Bug Fix Workflow
+description: Systematic approach to identify, fix, test, and deploy bug fixes
+version: 1.0.0
+
+triggers:
+  - type: manual
+    command: /fix-bug
+  - type: git
+    event: branch_created
+    pattern: bugfix/*
+  - type: issue
+    label: bug
+
+inputs:
+  - name: bug_description
+    description: Description of the bug
+    required: true
+
+  - name: reproduction_steps
+    description: Steps to reproduce the bug
+    required: true
+
+  - name: severity
+    description: Bug severity level
+    enum: [critical, high, medium, low]
+    required: true
+
+  - name: affected_area
+    description: Part of system affected
+    enum: [frontend, backend, database, api, ui]
+    required: true
+
+workflow:
+  - stage: Investigation
+    description: Understand and reproduce the bug
+    tasks:
+      - name: reproduce_bug
+        action: |
+          Follow reproduction steps to confirm the bug.
+          Document actual vs expected behavior.
+
+      - name: identify_root_cause
+        action: |
+          Use debugging tools to identify root cause.
+          Review logs, stack traces, and error messages.
+          Check related code and recent changes.
+
+      - name: assess_impact
+        action: |
+          Determine scope of impact.
+          Identify affected users, features, or data.
+          Check if other areas might have similar issues.
+
+    outputs:
+      - bug-analysis.md
+
+  - stage: Fix Implementation
+    description: Implement the bug fix
+    agent:
+      condition: |
+        if affected_area in ['frontend', 'ui']: 'frontend-specialist'
+        elif affected_area in ['backend', 'api', 'database']: 'backend-specialist'
+        else: 'architect'
+    tasks:
+      - name: implement_fix
+        action: |
+          Write code to fix the identified issue.
+          Follow minimal change principle - fix only what's broken.
+          Ensure fix doesn't introduce new issues.
+
+      - name: add_error_handling
+        action: |
+          Add proper error handling to prevent similar bugs.
+          Improve logging for better debugging in future.
+
+      - name: document_fix
+        action: |
+          Add code comments explaining the fix.
+          Document why the bug occurred.
+
+    outputs:
+      - Fixed source files
+
+  - stage: Testing
+    agent: qa-tester
+    tasks:
+      - name: verify_fix
+        action: |
+          Test the original reproduction steps.
+          Confirm bug is resolved.
+
+      - name: regression_tests
+        action: |
+          Run existing tests to ensure no regression.
+          Verify related functionality still works.
+
+      - name: add_test_case
+        action: |
+          Write test case for this specific bug.
+          Prevent regression in future.
+          Test edge cases related to the bug.
+
+      - name: manual_testing
+        condition: severity in ['critical', 'high']
+        action: |
+          Perform manual testing of affected feature.
+          Test user workflows that include the fix.
+
+    outputs:
+      - test-results.json
+      - new test files
+
+  - stage: Code Review
+    agent: code-reviewer
+    tasks:
+      - name: review_fix
+        action: |
+          Review fix for correctness and completeness.
+          Ensure minimal and focused changes.
+          Check for potential side effects.
+
+      - name: security_check
+        condition: affected_area in ['backend', 'api', 'database']
+        action: |
+          Verify fix doesn't introduce security issues.
+          Check input validation and error handling.
+
+    outputs:
+      - review-comments.md
+
+  - stage: Documentation
+    tasks:
+      - name: update_changelog
+        action: |
+          Add entry to CHANGELOG.md
+          Document the bug and fix clearly.
+
+      - name: update_docs
+        condition: bug affects documented behavior
+        action: |
+          Update relevant documentation.
+          Clarify expected behavior if needed.
+
+    outputs:
+      - CHANGELOG.md
+      - Updated docs
+
+  - stage: Deployment Strategy
+    condition: severity in ['critical', 'high']
+    agent: devops-engineer
+    tasks:
+      - name: plan_deployment
+        action: |
+          Create deployment plan for the fix.
+          Consider hotfix vs regular release.
+
+      - name: prepare_rollback
+        action: |
+          Document rollback procedure.
+          Prepare rollback scripts if needed.
+
+    outputs:
+      - deployment-plan.md
+
+  - stage: Validation
+    tasks:
+      - name: run_tests
+        action: |
+          npm test
+          Ensure all tests pass.
+
+      - name: build_check
+        action: |
+          npm run build
+          Verify build succeeds.
+
+      - name: lint
+        action: |
+          npm run lint -- --fix
+          Fix any linting issues.
+
+  - stage: Pull Request
+    tasks:
+      - name: create_pr
+        action: |
+          Create PR with bug fix.
+          Link to bug report issue.
+          Explain fix and testing done.
+
+      - name: pr_checklist
+        checklist:
+          - Bug is reproducible and verified
+          - Root cause identified
+          - Fix is minimal and focused
+          - Tests added to prevent regression
+          - All tests passing
+          - No side effects identified
+          - Documentation updated
+          - Rollback plan prepared (if critical)
+
+notifications:
+  on_success:
+    - type: comment
+      message: "Bug fix completed and tested! PR ready for review."
+    - type: issue_update
+      status: fixed
+      label: pending-review
+
+  on_failure:
+    - type: comment
+      message: "Bug fix workflow failed. Manual intervention required."
+
+metrics:
+  - time_to_fix
+  - time_to_deploy
+  - regression_introduced: false

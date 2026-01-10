@@ -1,0 +1,185 @@
+name: Database Migration Generator
+description: Creates database migration scripts with rollback support
+version: 1.0.0
+
+inputs:
+  - name: migration_name
+    type: string
+    description: Descriptive name for migration (e.g., "add-user-authentication")
+    required: true
+
+  - name: database_type
+    type: string
+    description: Database system
+    required: true
+    enum: [postgresql, mysql, mongodb, sqlite]
+
+  - name: operation_type
+    type: string
+    description: Type of migration operation
+    required: true
+    enum: [create_table, alter_table, add_column, drop_column, add_index, drop_index, seed_data]
+
+  - name: table_name
+    type: string
+    description: Name of the table
+    required: true
+
+  - name: columns
+    type: array
+    description: Column definitions
+    required: false
+
+  - name: indexes
+    type: array
+    description: Index definitions
+    required: false
+
+steps:
+  - name: Create migration file (SQL)
+    condition: database_type in ['postgresql', 'mysql', 'sqlite']
+    description: Generate SQL migration with up and down
+    template: |
+      -- Migration: {{migration_name}}
+      -- Created: {{timestamp}}
+      -- Database: {{database_type}}
+
+      -- UP
+      {{#if operation_type === 'create_table'}}
+      CREATE TABLE IF NOT EXISTS {{table_name}} (
+        id {{#if database_type === 'postgresql'}}SERIAL{{else}}INT AUTO_INCREMENT{{/if}} PRIMARY KEY,
+        {{#each columns}}
+        {{this.name}} {{this.type}}{{#if this.nullable}} NULL{{else}} NOT NULL{{/if}}{{#if this.default}} DEFAULT {{this.default}}{{/if}},
+        {{/each}}
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+
+      {{#each indexes}}
+      CREATE INDEX idx_{{../table_name}}_{{this.column}} ON {{../table_name}}({{this.column}});
+      {{/each}}
+
+      {{else if operation_type === 'alter_table'}}
+      ALTER TABLE {{table_name}}
+      {{#each columns}}
+      ADD COLUMN {{this.name}} {{this.type}}{{#if this.nullable}} NULL{{else}} NOT NULL{{/if}}{{#if @index < @../length - 1}},{{/if}}
+      {{/each}};
+
+      {{else if operation_type === 'add_column'}}
+      ALTER TABLE {{table_name}}
+      ADD COLUMN {{columns[0].name}} {{columns[0].type}}{{#if columns[0].nullable}} NULL{{else}} NOT NULL{{/if}};
+
+      {{else if operation_type === 'add_index'}}
+      CREATE INDEX idx_{{table_name}}_{{indexes[0].column}} ON {{table_name}}({{indexes[0].column}});
+      {{/if}}
+
+      -- DOWN
+      {{#if operation_type === 'create_table'}}
+      DROP TABLE IF EXISTS {{table_name}};
+
+      {{else if operation_type === 'alter_table'}}
+      ALTER TABLE {{table_name}}
+      {{#each columns}}
+      DROP COLUMN {{this.name}}{{#if @index < @../length - 1}},{{/if}}
+      {{/each}};
+
+      {{else if operation_type === 'add_column'}}
+      ALTER TABLE {{table_name}}
+      DROP COLUMN {{columns[0].name}};
+
+      {{else if operation_type === 'add_index'}}
+      DROP INDEX idx_{{table_name}}_{{indexes[0].column}};
+      {{/if}}
+
+  - name: Create migration file (MongoDB)
+    condition: database_type === 'mongodb'
+    description: Generate MongoDB migration with up and down
+    template: |
+      // Migration: {{migration_name}}
+      // Created: {{timestamp}}
+
+      module.exports = {
+        async up(db, client) {
+          {{#if operation_type === 'create_table'}}
+          await db.createCollection('{{table_name}}', {
+            validator: {
+              $jsonSchema: {
+                bsonType: "object",
+                required: [{{#each columns}}{{#if this.required}}"{{this.name}}"{{#unless @last}}, {{/unless}}{{/if}}{{/each}}],
+                properties: {
+                  {{#each columns}}
+                  {{this.name}}: {
+                    bsonType: "{{this.bsonType}}",
+                    description: "{{this.description}}"
+                  }{{#unless @last}},{{/unless}}
+                  {{/each}}
+                }
+              }
+            }
+          });
+
+          {{#each indexes}}
+          await db.collection('{{../table_name}}').createIndex(
+            { {{this.column}}: {{this.order}} },
+            { name: 'idx_{{this.column}}' }
+          );
+          {{/each}}
+
+          {{else if operation_type === 'seed_data'}}
+          await db.collection('{{table_name}}').insertMany([
+            // Seed data
+          ]);
+          {{/if}}
+        },
+
+        async down(db, client) {
+          {{#if operation_type === 'create_table'}}
+          await db.collection('{{table_name}}').drop();
+
+          {{else if operation_type === 'seed_data'}}
+          await db.collection('{{table_name}}').deleteMany({});
+          {{/if}}
+        }
+      };
+
+  - name: Create TypeScript ORM models
+    description: Generate TypeScript model definitions
+    template: |
+      import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+
+      @Entity('{{table_name}}')
+      export class {{table_name | pascalCase}} {
+        @PrimaryGeneratedColumn()
+        id: number;
+
+        {{#each columns}}
+        @Column({
+          type: '{{this.type}}',
+          {{#if this.nullable}}nullable: true,{{/if}}
+          {{#if this.default}}default: {{this.default}},{{/if}}
+        })
+        {{this.name}}: {{this.tsType}};
+
+        {{/each}}
+
+        @CreateDateColumn()
+        createdAt: Date;
+
+        @UpdateDateColumn()
+        updatedAt: Date;
+      }
+
+post_execution:
+  - action: validate_migration
+    command: npm run migration:validate
+
+  - action: generate_types
+    command: npm run db:generate-types
+
+  - action: update_schema
+    command: npm run db:update-schema
+
+outputs:
+  - migration_file: migrations/{{timestamp}}_{{migration_name}}.{{#if database_type === 'mongodb'}}js{{else}}sql{{/if}}
+  - model_file: src/models/{{table_name}}.model.ts
+  - repository_file: src/repositories/{{table_name}}.repository.ts

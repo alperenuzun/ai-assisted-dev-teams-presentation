@@ -1,0 +1,256 @@
+name: Complete Feature Development Workflow
+description: End-to-end workflow for developing a new feature from design to deployment
+version: 1.0.0
+
+triggers:
+  - type: manual
+    command: /develop-feature
+  - type: git
+    event: branch_created
+    pattern: feature/*
+
+inputs:
+  - name: feature_name
+    description: Name of the feature to develop
+    required: true
+
+  - name: feature_type
+    description: Type of feature
+    enum: [frontend, backend, fullstack, infrastructure]
+    required: true
+
+  - name: requirements
+    description: Feature requirements and specifications
+    required: true
+
+workflow:
+  - stage: Planning
+    description: Analyze requirements and create implementation plan
+    agent: architect
+    tasks:
+      - name: analyze_requirements
+        action: |
+          Review feature requirements and create technical specification.
+          Identify components, APIs, database changes needed.
+
+      - name: design_architecture
+        action: |
+          Design system architecture for the feature.
+          Create component diagrams and data flow.
+
+      - name: create_tasks
+        action: |
+          Break down feature into specific development tasks.
+          Estimate complexity and dependencies.
+
+    outputs:
+      - technical_spec.md
+      - architecture_diagram.md
+      - task_list.json
+
+  - stage: Backend Development
+    condition: feature_type in ['backend', 'fullstack']
+    agent: backend-specialist
+    tasks:
+      - name: database_changes
+        action: |
+          Create database migrations for new schema changes.
+          Use skill: database-migration-generator
+
+      - name: api_endpoints
+        action: |
+          Implement required API endpoints with validation.
+          Use skill: api-endpoint-creator
+
+      - name: business_logic
+        action: |
+          Implement core business logic and services.
+          Follow SOLID principles and clean architecture.
+
+      - name: backend_tests
+        action: |
+          Write unit and integration tests for backend code.
+          Ensure >80% code coverage.
+
+    outputs:
+      - migrations/
+      - src/routes/
+      - src/services/
+      - src/tests/
+
+  - stage: Frontend Development
+    condition: feature_type in ['frontend', 'fullstack']
+    agent: frontend-specialist
+    tasks:
+      - name: create_components
+        action: |
+          Build React components for the feature.
+          Use skill: react-component-builder
+
+      - name: state_management
+        action: |
+          Implement state management for feature data.
+          Connect to backend APIs.
+
+      - name: styling
+        action: |
+          Apply responsive and accessible styling.
+          Match design specifications.
+
+      - name: frontend_tests
+        action: |
+          Write component tests using React Testing Library.
+          Test user interactions and edge cases.
+
+    outputs:
+      - src/components/
+      - src/hooks/
+      - src/store/
+      - src/tests/
+
+  - stage: Quality Assurance
+    agent: qa-tester
+    tasks:
+      - name: unit_test_review
+        action: |
+          Review unit test coverage and quality.
+          Identify missing test cases.
+
+      - name: integration_tests
+        action: |
+          Create integration tests for feature workflows.
+          Test API integrations end-to-end.
+
+      - name: e2e_tests
+        action: |
+          Create E2E tests for user workflows.
+          Use skill: e2e-test-suite-creator
+
+      - name: performance_test
+        action: |
+          Test performance under expected load.
+          Identify bottlenecks and optimization opportunities.
+
+    outputs:
+      - test-reports/
+      - coverage-reports/
+      - e2e/
+
+  - stage: Code Review
+    agent: code-reviewer
+    tasks:
+      - name: security_audit
+        action: |
+          Review code for security vulnerabilities.
+          Check input validation, authentication, authorization.
+
+      - name: code_quality_check
+        action: |
+          Review code for quality, maintainability, and best practices.
+          Ensure consistent coding standards.
+
+      - name: performance_review
+        action: |
+          Check for performance issues and optimization opportunities.
+          Review database queries and API efficiency.
+
+    outputs:
+      - code-review-report.md
+
+  - stage: Documentation
+    tasks:
+      - name: api_documentation
+        action: |
+          Generate/update API documentation (Swagger/OpenAPI).
+          Document all new endpoints and changes.
+
+      - name: component_documentation
+        action: |
+          Update Storybook with new components.
+          Write component usage documentation.
+
+      - name: update_readme
+        action: |
+          Update README with new feature information.
+          Add setup instructions if needed.
+
+    outputs:
+      - docs/api/
+      - docs/components/
+      - README.md
+
+  - stage: Deployment Preparation
+    agent: devops-engineer
+    tasks:
+      - name: update_ci_cd
+        action: |
+          Update CI/CD pipelines for new feature.
+          Add any required build or test steps.
+
+      - name: environment_config
+        action: |
+          Add necessary environment variables.
+          Update configuration files.
+
+      - name: database_migration_plan
+        action: |
+          Create migration execution plan.
+          Prepare rollback strategy.
+
+    outputs:
+      - .github/workflows/
+      - config/
+      - DEPLOYMENT.md
+
+  - stage: Final Validation
+    tasks:
+      - name: run_all_tests
+        action: |
+          npm run test:all
+          Ensure all tests pass.
+
+      - name: build_check
+        action: |
+          npm run build
+          Verify production build succeeds.
+
+      - name: lint_and_format
+        action: |
+          npm run lint
+          npm run format
+
+      - name: type_check
+        action: |
+          npm run type-check
+          Ensure no TypeScript errors.
+
+  - stage: Pull Request
+    tasks:
+      - name: create_pr
+        action: |
+          Create pull request with detailed description.
+          Link related issues.
+          Add reviewers.
+
+      - name: pr_checklist
+        checklist:
+          - All tests passing
+          - Code coverage maintained/improved
+          - Documentation updated
+          - No security vulnerabilities
+          - Performance benchmarks met
+          - Accessibility requirements met
+
+notifications:
+  on_success:
+    - type: comment
+      message: "Feature development completed successfully! PR created and ready for review."
+
+  on_failure:
+    - type: comment
+      message: "Feature development encountered issues. Check workflow logs for details."
+
+rollback:
+  - Delete feature branch
+  - Revert database migrations
+  - Remove added dependencies
