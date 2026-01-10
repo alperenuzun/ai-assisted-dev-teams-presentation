@@ -1,0 +1,6 @@
+admin_controllers:
+    resource:
+        path: ../../src/Admin/Infrastructure/Controller/
+        namespace: App\Admin\Infrastructure\Controller
+    type: attribute
+    prefix: /admin

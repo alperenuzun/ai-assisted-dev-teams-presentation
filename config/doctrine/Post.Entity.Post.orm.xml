@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Api\Domain\Post\Entity\Post" table="posts" repository-class="App\Api\Infrastructure\Persistence\Doctrine\Repository\DoctrinePostRepository">
+        <id name="id" type="uuid_vo" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="title" type="post_title" column="title"/>
+        <field name="content" type="post_content" column="content"/>
+        <field name="status" type="post_status" column="status"/>
+        <field name="authorId" type="uuid_vo" column="author_id"/>
+        <field name="createdAt" type="created_at_vo" column="created_at"/>
+        <field name="publishedAt" type="datetime_immutable" column="published_at" nullable="true"/>
+    </entity>
+</doctrine-mapping>
