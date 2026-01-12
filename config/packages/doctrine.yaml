@@ -20,6 +20,7 @@ doctrine:
             post_content: App\Api\Infrastructure\Persistence\Doctrine\Type\PostContentType
             post_status: App\Api\Infrastructure\Persistence\Doctrine\Type\PostStatusType
             user_role: App\Api\Infrastructure\Persistence\Doctrine\Type\UserRoleType
+            comment_content: App\Api\Infrastructure\Persistence\Doctrine\Type\CommentContentType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

@@ -49,3 +49,6 @@ services:
 
     App\Api\Domain\User\Repository\UserRepositoryInterface:
         alias: App\Api\Infrastructure\Persistence\Doctrine\Repository\DoctrineUserRepository
+
+    App\Api\Domain\Comment\Repository\CommentRepositoryInterface:
+        alias: App\Api\Infrastructure\Persistence\Doctrine\Repository\DoctrineCommentRepository
