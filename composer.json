@@ -19,7 +19,14 @@
         "symfony/security-bundle": "7.3.*",
         "symfony/validator": "7.3.*",
         "symfony/yaml": "7.3.*",
-        "symfony/password-hasher": "7.3.*"
+        "symfony/password-hasher": "7.3.*",
+        "symfony/amazon-sqs-messenger": "7.3.*",
+        "symfony/amqp-messenger": "7.3.*",
+        "symfony/expression-language": "7.3.*",
+        "symfony/monolog-bundle": "^3.11.1",
+        "symfony/scheduler": "7.3.*",
+        "symfony/twig-bundle": "7.3.*",
+        "symfony/uid": "7.3.*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.6",

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Plus UI Design System{% endblock %}</title>
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ asset('css/variables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components/principle-card.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components/structure-item.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components/community-card.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components/figma-preview.css') }}">
+    
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    {% block header %}
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__logo">
+                    <div class="header__logo-icon">+</div>
+                    <span class="header__logo-text">Plus UI</span>
+                </div>
+                <a href="https://www.plusui.com" class="header__link" target="_blank" rel="noopener noreferrer">
+                    www.plusui.com
+                </a>
+            </div>
+        </div>
+    </header>
+    {% endblock %}
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    {% block footer %}{% endblock %}
+    
+    {% block javascripts %}{% endblock %}
+</body>
+</html>
