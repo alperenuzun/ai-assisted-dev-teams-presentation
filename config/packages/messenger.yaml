@@ -26,6 +26,12 @@ framework:
             # User Commands
             'App\Api\Application\User\Command\RegisterUserCommand': sync
 
+            # Comment Commands
+            'App\Api\Application\Comment\Command\CreateCommentCommand': sync
+
+            # Comment Queries
+            'App\Api\Application\Comment\Query\ListCommentsQuery': sync
+
 when@test:
     framework:
         messenger:
