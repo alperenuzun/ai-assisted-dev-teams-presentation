@@ -1,0 +1,86 @@
+{
+  "Jest Test Suite": {
+    "prefix": "jtest",
+    "body": [
+      "describe('${1:TestSuiteName}', () => {",
+      "  beforeEach(() => {",
+      "    ${2:// setup}",
+      "  });",
+      "  ",
+      "  afterEach(() => {",
+      "    ${3:// cleanup}",
+      "  });",
+      "  ",
+      "  it('should ${4:test description}', () => {",
+      "    ${5:// test logic}",
+      "    expect(${6:actual}).toBe(${7:expected});",
+      "  });",
+      "});"
+    ],
+    "description": "Create a Jest test suite"
+  },
+  "React Component Test": {
+    "prefix": "rtest",
+    "body": [
+      "import { render, screen, fireEvent } from '@testing-library/react';",
+      "import { ${1:ComponentName} } from './${1}';",
+      "",
+      "describe('${1}', () => {",
+      "  it('should render correctly', () => {",
+      "    render(<${1} ${2:props} />);",
+      "    ",
+      "    expect(screen.getByText('${3:text}')).toBeInTheDocument();",
+      "  });",
+      "  ",
+      "  it('should handle ${4:interaction}', () => {",
+      "    render(<${1} ${2:props} />);",
+      "    ",
+      "    fireEvent.${5:click}(screen.getByRole('${6:button}'));",
+      "    ",
+      "    expect(${7:assertion}).toBe(${8:expected});",
+      "  });",
+      "});"
+    ],
+    "description": "Create a React component test with React Testing Library"
+  },
+  "API Test": {
+    "prefix": "apitest",
+    "body": [
+      "describe('${1:API Endpoint}', () => {",
+      "  it('should ${2:test description}', async () => {",
+      "    const response = await request(app)",
+      "      .${3|get,post,put,delete,patch|}('${4:/endpoint}')",
+      "      .send(${5:data})",
+      "      .expect(${6:200});",
+      "    ",
+      "    expect(response.body).toMatchObject({",
+      "      ${7:expectedShape}",
+      "    });",
+      "  });",
+      "});"
+    ],
+    "description": "Create an API endpoint test"
+  },
+  "Mock Function": {
+    "prefix": "jmock",
+    "body": [
+      "const ${1:mockFunction} = jest.fn().mockReturnValue(${2:returnValue});"
+    ],
+    "description": "Create a Jest mock function"
+  },
+  "Async Test": {
+    "prefix": "jasync",
+    "body": [
+      "it('should ${1:test description}', async () => {",
+      "  ${2:// arrange}",
+      "  ",
+      "  ${3:// act}",
+      "  const result = await ${4:asyncFunction}();",
+      "  ",
+      "  ${5:// assert}",
+      "  expect(result).toBe(${6:expected});",
+      "});"
+    ],
+    "description": "Create an async test case"
+  }
+}

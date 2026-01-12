@@ -1,0 +1,78 @@
+{
+  "Express Route Handler": {
+    "prefix": "exroute",
+    "body": [
+      "router.${1|get,post,put,delete,patch|}('${2:/path}', async (req: Request, res: Response) => {",
+      "  try {",
+      "    ${3:// handler logic}",
+      "    res.status(200).json({ success: true, data: ${4:result} });",
+      "  } catch (error) {",
+      "    res.status(500).json({ success: false, error: error.message });",
+      "  }",
+      "});"
+    ],
+    "description": "Create an Express route handler with error handling"
+  },
+  "API Service Method": {
+    "prefix": "apisvc",
+    "body": [
+      "async ${1:methodName}(${2:params}): Promise<${3:ReturnType}> {",
+      "  try {",
+      "    const response = await this.httpClient.${4|get,post,put,delete,patch|}('${5:/endpoint}', ${6:data});",
+      "    return response.data;",
+      "  } catch (error) {",
+      "    throw new ApiError('${7:Error message}', error);",
+      "  }",
+      "}"
+    ],
+    "description": "Create an API service method"
+  },
+  "Middleware Function": {
+    "prefix": "exmw",
+    "body": [
+      "export const ${1:middlewareName} = (req: Request, res: Response, next: NextFunction) => {",
+      "  try {",
+      "    ${2:// middleware logic}",
+      "    next();",
+      "  } catch (error) {",
+      "    res.status(${3:400}).json({ success: false, error: error.message });",
+      "  }",
+      "};"
+    ],
+    "description": "Create an Express middleware function"
+  },
+  "REST Controller": {
+    "prefix": "restctrl",
+    "body": [
+      "export class ${1:Resource}Controller {",
+      "  constructor(private ${1/(.*)/${1:/downcase}/}Service: ${1}Service) {}",
+      "  ",
+      "  async getAll(req: Request, res: Response) {",
+      "    const items = await this.${1/(.*)/${1:/downcase}/}Service.findAll();",
+      "    res.json({ success: true, data: items });",
+      "  }",
+      "  ",
+      "  async getById(req: Request, res: Response) {",
+      "    const item = await this.${1/(.*)/${1:/downcase}/}Service.findById(req.params.id);",
+      "    res.json({ success: true, data: item });",
+      "  }",
+      "  ",
+      "  async create(req: Request, res: Response) {",
+      "    const item = await this.${1/(.*)/${1:/downcase}/}Service.create(req.body);",
+      "    res.status(201).json({ success: true, data: item });",
+      "  }",
+      "  ",
+      "  async update(req: Request, res: Response) {",
+      "    const item = await this.${1/(.*)/${1:/downcase}/}Service.update(req.params.id, req.body);",
+      "    res.json({ success: true, data: item });",
+      "  }",
+      "  ",
+      "  async delete(req: Request, res: Response) {",
+      "    await this.${1/(.*)/${1:/downcase}/}Service.delete(req.params.id);",
+      "    res.status(204).send();",
+      "  }",
+      "}"
+    ],
+    "description": "Create a complete REST controller"
+  }
+}

@@ -1,0 +1,384 @@
+# AI Pack Ignore Patterns
+# Files and directories that AI agents should ignore when analyzing the codebase
+# Syntax: Standard gitignore format
+
+# ============================================================================
+# Dependencies and Package Managers
+# ============================================================================
+
+# Node modules
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.yarn/
+.pnp.*
+
+# Package lock files (usually not relevant for AI analysis)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ============================================================================
+# Build Outputs and Compiled Files
+# ============================================================================
+
+# Build directories
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.vite/
+
+# Compiled files
+*.js.map
+*.css.map
+*.min.js
+*.min.css
+*.bundle.js
+*.chunk.js
+
+# TypeScript compiled output
+*.tsbuildinfo
+*.d.ts.map
+
+# ============================================================================
+# IDE and Editor Files
+# ============================================================================
+
+# VS Code
+.vscode/
+*.code-workspace
+.history/
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============================================================================
+# Operating System Files
+# ============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================================================
+# Logs and Temporary Files
+# ============================================================================
+
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+.temp/
+.tmp/
+
+# ============================================================================
+# Test Coverage and Reports
+# ============================================================================
+
+# Coverage reports
+coverage/
+.nyc_output/
+*.lcov
+.coverage/
+htmlcov/
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Test reports
+test-results/
+junit.xml
+*.test-results.xml
+
+# ============================================================================
+# Environment and Configuration
+# ============================================================================
+
+# Environment files (may contain secrets)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*.local
+*.env
+
+# Local configuration
+.local/
+local.config.*
+config.local.*
+
+# ============================================================================
+# Version Control
+# ============================================================================
+
+# Git
+.git/
+.gitattributes
+.gitkeep
+
+# SVN
+.svn/
+
+# Mercurial
+.hg/
+
+# ============================================================================
+# Documentation Build Outputs
+# ============================================================================
+
+# Docusaurus
+.docusaurus/
+docs/.docusaurus/
+
+# VuePress
+docs/.vuepress/dist/
+
+# Sphinx
+docs/_build/
+docs/_static/
+docs/_templates/
+
+# ============================================================================
+# Database Files
+# ============================================================================
+
+# SQLite
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# Database dumps
+*.sql
+*.dump
+
+# ============================================================================
+# Media and Binary Files
+# ============================================================================
+
+# Images (usually not relevant for code analysis)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.ico
+*.svg
+*.webp
+
+# Videos
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+
+# Audio
+*.mp3
+*.wav
+*.ogg
+*.flac
+
+# Fonts
+*.ttf
+*.otf
+*.woff
+*.woff2
+*.eot
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# ============================================================================
+# Cloud and Deployment
+# ============================================================================
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# AWS
+.aws/
+.elasticbeanstalk/
+
+# Google Cloud
+.gcloud/
+
+# Docker
+.dockerignore
+
+# Kubernetes
+*.kubeconfig
+
+# ============================================================================
+# Monitoring and Analytics
+# ============================================================================
+
+# Sentry
+.sentryclirc
+
+# Analytics
+.vercel/
+.netlify/
+
+# ============================================================================
+# Security and Secrets
+# ============================================================================
+
+# Private keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+
+# SSH
+.ssh/
+id_rsa
+id_dsa
+
+# GPG
+*.gpg
+*.asc
+
+# Certificates
+*.cert
+*.csr
+
+# ============================================================================
+# Miscellaneous
+# ============================================================================
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Lock files
+*.lock
+
+# Minified files
+*.min.*
+
+# Source maps (already covered but emphasizing)
+*.map
+
+# Storybook
+storybook-static/
+.storybook-out/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+
+# Playwright
+playwright-report/
+test-results/
+
+# ============================================================================
+# Project-Specific Patterns
+# ============================================================================
+
+# Add your project-specific patterns below
+# Example:
+# legacy/
+# deprecated/
+# vendor/
+# third-party/
+
+# Large data files
+*.csv
+*.json.gz
+*.xml.gz
+
+# Generated API documentation
+api-docs/
+swagger-ui/
+
+# Mobile development
+*.apk
+*.ipa
+*.app
+
+# ============================================================================
+# AI-Specific Exclusions
+# ============================================================================
+
+# Large model files
+*.model
+*.weights
+*.h5
+*.pb
+
+# Training data
+training-data/
+datasets/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# ============================================================================
+# End of ignore patterns
+# ============================================================================

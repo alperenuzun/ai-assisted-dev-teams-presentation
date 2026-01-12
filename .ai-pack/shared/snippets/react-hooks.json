@@ -1,0 +1,62 @@
+{
+  "useState Hook": {
+    "prefix": "ush",
+    "body": [
+      "const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = useState<${2:type}>(${3:initialValue});"
+    ],
+    "description": "Create a useState hook with TypeScript"
+  },
+  "useEffect Hook": {
+    "prefix": "uef",
+    "body": [
+      "useEffect(() => {",
+      "  ${1:// effect logic}",
+      "  ",
+      "  return () => {",
+      "    ${2:// cleanup}",
+      "  };",
+      "}, [${3:dependencies}]);"
+    ],
+    "description": "Create a useEffect hook with cleanup"
+  },
+  "useCallback Hook": {
+    "prefix": "ucb",
+    "body": [
+      "const ${1:memoizedCallback} = useCallback(",
+      "  (${2:params}) => {",
+      "    ${3:// callback logic}",
+      "  },",
+      "  [${4:dependencies}]",
+      ");"
+    ],
+    "description": "Create a useCallback hook"
+  },
+  "useMemo Hook": {
+    "prefix": "umm",
+    "body": [
+      "const ${1:memoizedValue} = useMemo(",
+      "  () => ${2:computeExpensiveValue()},",
+      "  [${3:dependencies}]",
+      ");"
+    ],
+    "description": "Create a useMemo hook"
+  },
+  "Custom Hook": {
+    "prefix": "uch",
+    "body": [
+      "export const use${1:CustomHook} = (${2:params}) => {",
+      "  const [${3:state}, set${3/(.*)/${1:/capitalize}/}] = useState<${4:type}>(${5:initialValue});",
+      "  ",
+      "  useEffect(() => {",
+      "    ${6:// effect logic}",
+      "  }, [${7:dependencies}]);",
+      "  ",
+      "  return {",
+      "    ${3:state},",
+      "    set${3/(.*)/${1:/capitalize}/}",
+      "  };",
+      "};"
+    ],
+    "description": "Create a custom React hook"
+  }
+}
