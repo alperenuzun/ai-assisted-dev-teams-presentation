@@ -539,6 +539,27 @@ docker exec blog-php php bin/console doctrine:migrations:migrate --no-interactio
 docker exec blog-php php bin/console doctrine:schema:validate
 ```
 
+## Presentation Commands
+
+```bash
+
+# feature implementation example
+/add-localization
+
+# jira to pr (workflow example)
+/jira-to-pr
+
+# confluence documentation
+/write-to-confluence https://pozitim.atlassian.net/wiki/spaces/~995900398/pages/3214180359/AI+Blog+API+Documentation
+
+# figma to code (MCP example)
+/figma-to-code https://www.figma.com/design/UUTDSi1H39dcbwlPwszSa5/sunu?node-id=1-30597&t=TCqOsoZde975PvgP-0
+
+# Parallel feature implementation example
+/parallel-features "Comment"
+/parallel-features "Tag"
+```
+
 ## 📞 Support
 
 For implementation guidance, refer to:

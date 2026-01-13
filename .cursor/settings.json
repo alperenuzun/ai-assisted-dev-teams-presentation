@@ -1,0 +1,14 @@
+{
+  "aiPack": {
+    "enabled": true,
+    "agentsDirectory": ".ai-pack/shared/agents",
+    "commandsDirectory": ".ai-pack/shared/commands",
+    "contextDirectory": ".ai-pack/shared/context",
+    "instructionsFile": ".ai-pack/shared/instructions.md",
+    "ignorePatterns": ".ai-pack/shared/ignore-patterns.txt",
+    "defaultAgent": "code-reviewer",
+    "enabledAgents": ["*"]
+  },
+  "cursor.ai.useProjectContext": true,
+  "cursor.ai.followProjectRules": true
+}

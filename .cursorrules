@@ -1,0 +1,237 @@
+# Cursor AI Rules - Symfony DDD Blog Application
+
+## Project Overview
+
+This is a Symfony 7.3 DDD (Domain-Driven Design) blog application demonstrating modern PHP architecture patterns. It uses PHP 8.3, PostgreSQL 16, and runs in Docker containers.
+
+## Critical Rules
+
+1. **Docker Commands**: ALWAYS use `docker exec blog-php` for ALL PHP commands
+2. **Port**: Application runs on port 8081 (not 8080)
+3. **Architecture**: Follow DDD architecture patterns strictly
+4. **Mappings**: Use XML Doctrine mappings (not annotations)
+5. **Database**: No migrations - use schema:create
+
+## Technology Stack
+
+- PHP 8.3 with strict types
+- Symfony 7.3
+- PostgreSQL 16
+- Doctrine ORM with XML mappings
+- Pest PHP for testing
+- Docker containers
+
+## Project Structure
+
+```
+src/
+├── Api/                    # REST API Bounded Context
+│   ├── Domain/            # Business logic (no dependencies)
+│   │   ├── Entity/        # Aggregate roots
+│   │   ├── ValueObject/   # Immutable value types
+│   │   └── Repository/    # Interface definitions
+│   ├── Application/       # Use cases (CQRS)
+│   │   ├── Command/       # Write operations
+│   │   └── Query/         # Read operations
+│   └── Infrastructure/    # Framework integrations
+│       ├── Controller/    # REST endpoints
+│       └── Persistence/   # Doctrine implementations
+├── Admin/                 # Admin Bounded Context
+├── Web/                   # Public Web Bounded Context
+└── SharedKernel/          # Shared components
+    ├── Domain/            # Shared value objects
+    └── Infrastructure/    # Shared Doctrine types
+```
+
+## Available AI Agents
+
+Reference agents from `.ai-pack/shared/agents/`:
+
+| Agent | Purpose |
+|-------|---------|
+| `qa-staging-endpoint-agent` | Create QA automation endpoints in StageController |
+| `backend-feature-agent` | Implement backend features with DDD patterns |
+| `test-writer-agent` | Generate Pest PHP tests |
+| `security-auditor-agent` | Security code review |
+| `tech-document-writer-agent` | API documentation |
+
+## Available Commands
+
+Reference commands from `.ai-pack/shared/commands/`:
+
+- `/create-staging-endpoint` - Create QA automation endpoint
+- `/create-new-endpoint-with-services` - Create REST endpoint with CQRS
+- `/apidoc-check` - Validate API documentation
+- `/security-scan` - Run security checks
+
+## Code Generation Standards
+
+### Entity Pattern
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Api\Domain\Post\Entity;
+
+final class Post
+{
+    private function __construct(
+        private readonly Uuid $id,
+        private PostTitle $title,
+        private PostContent $content,
+        private readonly CreatedAt $createdAt
+    ) {}
+
+    public static function create(PostTitle $title, PostContent $content, string $authorId): self
+    {
+        return new self(Uuid::generate(), $title, $content, CreatedAt::now());
+    }
+}
+```
+
+### Controller Pattern
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Api\Infrastructure\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Messenger\MessageBusInterface;
+
+#[Route('/resource', name: 'resource_')]
+class ResourceController extends AbstractController
+{
+    public function __construct(
+        private readonly MessageBusInterface $messageBus
+    ) {}
+
+    #[Route('', name: 'list', methods: ['GET'])]
+    public function list(): JsonResponse
+    {
+        $envelope = $this->messageBus->dispatch(new ListResourceQuery());
+        // ...
+    }
+}
+```
+
+### Test Pattern (Pest PHP)
+```php
+<?php
+
+declare(strict_types=1);
+
+test('entity can be created', function () {
+    $entity = Entity::create();
+    
+    expect($entity->getId())->toBeInstanceOf(Uuid::class);
+});
+```
+
+## CQRS with Symfony Messenger
+
+### Commands (Writes)
+```php
+class CreatePostCommand
+{
+    public function __construct(
+        public readonly string $title,
+        public readonly string $content,
+        public readonly string $authorId
+    ) {}
+}
+
+#[AsMessageHandler]
+class CreatePostHandler
+{
+    public function __invoke(CreatePostCommand $command): string
+    {
+        // Implementation
+    }
+}
+```
+
+### Queries (Reads)
+```php
+class ListPostsQuery
+{
+    public function __construct(
+        public readonly int $page = 1,
+        public readonly int $limit = 10
+    ) {}
+}
+
+#[AsMessageHandler]
+class ListPostsHandler
+{
+    public function __invoke(ListPostsQuery $query): array
+    {
+        // Implementation
+    }
+}
+```
+
+## QA Staging Endpoints
+
+For QA automation, use StageController at `/api/stage/`:
+- `GET /api/stage/health` - Health check
+- `GET /api/stage/users` - Mock user list
+- `POST /api/stage/echo` - Echo request parameters
+
+Create new endpoints using the qa-staging-endpoint-agent pattern.
+
+## Database Commands
+
+```bash
+# Reset database
+docker exec blog-php php bin/console doctrine:database:drop --force --if-exists
+docker exec blog-php php bin/console doctrine:database:create
+docker exec blog-php php bin/console doctrine:schema:create
+docker exec blog-php php bin/console doctrine:fixtures:load --no-interaction
+
+# Validate mappings
+docker exec blog-php php bin/console doctrine:schema:validate
+```
+
+## Testing Commands
+
+```bash
+# Run all tests
+docker exec blog-php vendor/bin/pest
+
+# Run specific test
+docker exec blog-php vendor/bin/pest tests/Unit/Api/Domain/Post/Entity/PostTest.php
+```
+
+## Authentication
+
+- JWT-based via LexikJWTAuthenticationBundle
+- Default users:
+  - admin@blog.com / password
+  - user@blog.com / password
+
+## Security Guidelines
+
+- Never commit secrets or API keys
+- Validate all user inputs
+- Use parameterized queries (Doctrine handles this)
+- Follow OWASP guidelines
+
+## File Naming Conventions
+
+- Entities: `Post.php`, `User.php` (singular)
+- Value Objects: `PostTitle.php`, `PostContent.php`
+- Controllers: `PostController.php`, `UserController.php`
+- Repositories: `DoctrinePostRepository.php`
+- Tests: `PostTest.php`, `UuidTest.php`
+
+## Helpful Resources
+
+- Agent definitions: `.ai-pack/shared/agents/`
+- Commands: `.ai-pack/shared/commands/`
+- Instructions: `.ai-pack/shared/instructions.md`
+- Project docs: `CLAUDE.md`

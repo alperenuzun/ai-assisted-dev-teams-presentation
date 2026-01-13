@@ -6,6 +6,19 @@ This document describes the AI agents available in this project, their roles, ca
 
 ---
 
+## Quick Reference
+
+| Agent | File | Purpose |
+|-------|------|---------|
+| QA Staging Endpoint | `qa-staging-endpoint-agent.json` | Create QA automation endpoints |
+| Backend Feature | `backend-feature-agent.json` | Implement backend features with DDD |
+| Test Writer | `test-writer-agent.json` | Generate Pest PHP tests |
+| Security Auditor | `security-auditor-agent.json` | Security code review |
+| Tech Document Writer | `tech-document-writer-agent.json` | API documentation |
+| COR Refactor | `cor-refactor-agent.json` | Chain of Responsibility refactoring |
+
+---
+
 ## Agent Architecture
 
 ### Agent Types
@@ -38,6 +51,47 @@ This document describes the AI agents available in this project, their roles, ca
 ---
 
 ## Available Agents
+
+### 0. QA Staging Endpoint Agent
+
+**Role**: QA automation staging endpoint specialist
+
+**Configuration**: `.ai-pack/shared/agents/qa-staging-endpoint-agent.json`
+
+**Capabilities**:
+
+- Create staging/mock endpoints for QA automation
+- Map request parameters to response parameters
+- Generate consistent JSON responses
+- Handle HTTP methods (GET, POST, PUT, DELETE)
+- Validate required parameters
+
+**When to Use**:
+
+- QA team needs test endpoints
+- Frontend integration testing
+- API contract verification
+- Mock data generation
+- Automated test scenarios
+
+**Example Usage**:
+
+```bash
+# Create a staging endpoint
+/create-staging-endpoint /orders GET --request '[{"name":"page","type":"int"}]' --response '[{"name":"orders","type":"array"}]'
+```
+
+**Target File**: `src/Api/Infrastructure/Controller/StageController.php`
+
+**Rules**:
+
+- Always add to StageController only
+- Never include business logic
+- Never access database
+- Never require authentication
+- Always return JSON with status, data, timestamp
+
+---
 
 ### 1. Architect Agent
 
