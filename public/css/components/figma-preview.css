@@ -1,0 +1,78 @@
+.figma-section {
+  margin-top: var(--spacing-8);
+}
+
+.figma-section__title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-6);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.figma-section__heart-icon {
+  width: 20px;
+  height: 20px;
+  fill: var(--color-text-default);
+}
+
+.figma-previews {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+}
+
+.figma-preview-card {
+  border: var(--border-width-default) solid var(--color-card-border);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.figma-preview-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.figma-preview-card__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.figma-preview-card__title {
+  padding: var(--spacing-4);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-default);
+  background-color: var(--color-background-surface);
+}
+
+.figma-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-base);
+  color: var(--color-text-link);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.figma-link:hover {
+  color: var(--color-border-primary);
+}
+
+.figma-link__icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+@media (max-width: 640px) {
+  .figma-previews {
+    grid-template-columns: 1fr;
+  }
+}

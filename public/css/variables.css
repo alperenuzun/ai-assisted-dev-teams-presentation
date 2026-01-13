@@ -1,0 +1,92 @@
+:root {
+  /* Colors - From Figma Design Tokens */
+  --color-text-default: #030712;
+  --color-text-base: #ffffff;
+  --color-text-link: #1d4ed8;
+  
+  --color-background-surface: #ffffff;
+  --color-background-default: #f3f4f6;
+  --color-background-primary-invert-default: #e0e7ff;
+  --color-background-primary-invert-pressed: #a5b4fc;
+  --color-background-info-default: #1d4ed8;
+  --color-background-disabled: #e5e7eb;
+  
+  --color-border-default: #9ca3af;
+  --color-border-primary: #4338ca;
+  
+  /* Welcome Section Background (light blue/lavender) */
+  --color-welcome-background: #e8eaf6;
+  
+  /* Header Background (white) */
+  --color-header-background: #ffffff;
+  
+  /* Card Backgrounds */
+  --color-card-background: #f0f4fa;
+  --color-card-border: #e0e0e0;
+  
+  /* Typography */
+  --font-family-default: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  
+  /* Font Sizes */
+  --font-size-6xl: 60px;
+  --font-size-4xl: 36px;
+  --font-size-3xl: 30px;
+  --font-size-2xl: 24px;
+  --font-size-xl: 20px;
+  --font-size-lg: 18px;
+  --font-size-base: 16px;
+  --font-size-sm: 14px;
+  
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semi-bold: 600;
+  --font-weight-bold: 700;
+  
+  /* Line Heights */
+  --line-height-6xl: 60px;
+  --line-height-4xl: 40px;
+  --line-height-3xl: 36px;
+  --line-height-2xl: 32px;
+  --line-height-lg: 28px;
+  --line-height-base: 24px;
+  --line-height-sm: 20px;
+  
+  /* Spacing */
+  --spacing-1: 4px;
+  --spacing-1-5: 6px;
+  --spacing-2: 8px;
+  --spacing-2-5: 10px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-24: 96px;
+  --spacing-32: 128px;
+  
+  /* Border Radius */
+  --border-radius-none: 0;
+  --border-radius-default: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 10px;
+  --border-radius-full: 9999px;
+  
+  /* Border Width */
+  --border-width-default: 1px;
+  
+  /* Shadows */
+  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-card-hover: 0 8px 12px rgba(0, 0, 0, 0.15);
+  
+  /* Container */
+  --container-max-width: 1200px;
+  --container-padding: var(--spacing-6);
+  
+  /* Breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
