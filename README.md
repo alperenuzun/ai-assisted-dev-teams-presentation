@@ -547,7 +547,7 @@ docker exec blog-php php bin/console doctrine:schema:validate
 /add-localization
 
 # jira to pr (workflow example)
-/jira-to-pr
+/jira-to-pr https://pozitim.atlassian.net/browse/TELI-1026
 
 # confluence documentation
 /write-to-confluence https://pozitim.atlassian.net/wiki/spaces/~995900398/pages/3214180359/AI+Blog+API+Documentation
