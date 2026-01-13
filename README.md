@@ -552,12 +552,12 @@ docker exec blog-php php bin/console doctrine:schema:validate
 # confluence documentation
 /write-to-confluence https://pozitim.atlassian.net/wiki/spaces/~995900398/pages/3214180359/AI+Blog+API+Documentation
 
-# figma to code (MCP example)
-/figma-to-code https://www.figma.com/design/UUTDSi1H39dcbwlPwszSa5/sunu?node-id=1-30597&t=TCqOsoZde975PvgP-0
-
 # Parallel feature implementation example
 /parallel-features "Comment"
 /parallel-features "Tag"
+
+# figma to code (MCP example)
+/figma-to-code https://www.figma.com/design/UUTDSi1H39dcbwlPwszSa5/sunu?node-id=1-30597&t=TCqOsoZde975PvgP-0
 ```
 
 ## 📞 Support
