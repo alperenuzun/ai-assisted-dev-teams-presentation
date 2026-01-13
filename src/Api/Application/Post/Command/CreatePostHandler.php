@@ -19,8 +19,7 @@ final readonly class CreatePostHandler
 {
     public function __construct(
         private PostRepositoryInterface $postRepository
-    ) {
-    }
+    ) {}
 
     public function __invoke(CreatePostCommand $command): string
     {

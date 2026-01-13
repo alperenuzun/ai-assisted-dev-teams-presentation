@@ -12,6 +12,7 @@ use App\SharedKernel\Domain\Exception\ValidationException;
 final readonly class UserRole
 {
     private const ROLE_USER = 'ROLE_USER';
+
     private const ROLE_ADMIN = 'ROLE_ADMIN';
 
     private const VALID_ROLES = [
@@ -67,7 +68,7 @@ final readonly class UserRole
 
     private function validate(): void
     {
-        if (!in_array($this->value, self::VALID_ROLES, true)) {
+        if (! in_array($this->value, self::VALID_ROLES, true)) {
             throw new ValidationException(
                 sprintf(
                     'Invalid user role: %s. Allowed values: %s',

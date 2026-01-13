@@ -13,12 +13,11 @@ final readonly class CreatedAt
 {
     private function __construct(
         private \DateTimeImmutable $value
-    ) {
-    }
+    ) {}
 
     public static function now(): self
     {
-        return new self(new \DateTimeImmutable());
+        return new self(new \DateTimeImmutable);
     }
 
     public static function fromDateTime(\DateTimeImmutable $value): self

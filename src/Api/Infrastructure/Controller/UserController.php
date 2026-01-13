@@ -18,15 +18,14 @@ class UserController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus
-    ) {
-    }
+    ) {}
 
     #[Route('', name: 'register', methods: ['POST'])]
     public function register(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['email'], $data['password'])) {
+        if (! isset($data['email'], $data['password'])) {
             return $this->json(['error' => 'Missing email or password'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -41,7 +40,7 @@ class UserController extends AbstractController
 
             return $this->json([
                 'id' => $userId,
-                'message' => 'User registered successfully'
+                'message' => 'User registered successfully',
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);

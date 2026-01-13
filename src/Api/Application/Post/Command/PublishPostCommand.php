@@ -11,6 +11,5 @@ final readonly class PublishPostCommand
 {
     public function __construct(
         public string $postId
-    ) {
-    }
+    ) {}
 }

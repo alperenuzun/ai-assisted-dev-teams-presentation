@@ -14,6 +14,7 @@ use App\SharedKernel\Domain\Exception\ValidationException;
 final readonly class PostTitle
 {
     private const MIN_LENGTH = 3;
+
     private const MAX_LENGTH = 255;
 
     private function __construct(

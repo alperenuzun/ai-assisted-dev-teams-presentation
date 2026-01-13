@@ -15,12 +15,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserFixtures extends Fixture
 {
     public const ADMIN_USER_REFERENCE = 'admin-user';
+
     public const REGULAR_USER_REFERENCE = 'regular-user';
 
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher
-    ) {
-    }
+    ) {}
 
     public function load(ObjectManager $manager): void
     {

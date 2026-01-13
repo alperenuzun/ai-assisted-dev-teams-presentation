@@ -17,8 +17,7 @@ final readonly class GetPostHandler
 {
     public function __construct(
         private PostRepositoryInterface $postRepository
-    ) {
-    }
+    ) {}
 
     public function __invoke(GetPostQuery $query): ?Post
     {

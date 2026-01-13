@@ -22,17 +22,16 @@ class PostController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus
-    ) {
-    }
+    ) {}
 
     #[Route('', name: 'list', methods: ['GET'])]
     public function list(): JsonResponse
     {
-        $envelope = $this->messageBus->dispatch(new ListPostsQuery());
+        $envelope = $this->messageBus->dispatch(new ListPostsQuery);
         /** @var Post[] $posts */
         $posts = $envelope->last(HandledStamp::class)?->getResult() ?? [];
 
-        return $this->json(array_map(fn(Post $post) => [
+        return $this->json(array_map(fn (Post $post) => [
             'id' => $post->getId()->toString(),
             'title' => $post->getTitle()->toString(),
             'content' => $post->getContent()->toString(),
@@ -50,7 +49,7 @@ class PostController extends AbstractController
         /** @var Post|null $post */
         $post = $envelope->last(HandledStamp::class)?->getResult();
 
-        if (!$post) {
+        if (! $post) {
             return $this->json(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
         }
 
@@ -70,13 +69,13 @@ class PostController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['title'], $data['content'])) {
+        if (! isset($data['title'], $data['content'])) {
             return $this->json(['error' => 'Missing title or content'], Response::HTTP_BAD_REQUEST);
         }
 
         // Get current user ID
         $user = $this->getUser();
-        if (!$user) {
+        if (! $user) {
             return $this->json(['error' => 'Authentication required'], Response::HTTP_UNAUTHORIZED);
         }
 

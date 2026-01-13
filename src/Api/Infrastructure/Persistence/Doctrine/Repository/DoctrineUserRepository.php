@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
-class DoctrineUserRepository extends ServiceEntityRepository implements UserRepositoryInterface, PasswordUpgraderInterface
+class DoctrineUserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -50,7 +50,7 @@ class DoctrineUserRepository extends ServiceEntityRepository implements UserRepo
 
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
         }
 

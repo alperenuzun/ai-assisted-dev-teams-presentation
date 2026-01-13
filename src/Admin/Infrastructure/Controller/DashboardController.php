@@ -16,8 +16,7 @@ class DashboardController extends AbstractController
     public function __construct(
         private readonly PostRepositoryInterface $postRepository,
         private readonly UserRepositoryInterface $userRepository
-    ) {
-    }
+    ) {}
 
     #[Route('', name: 'stats', methods: ['GET'])]
     public function stats(): JsonResponse

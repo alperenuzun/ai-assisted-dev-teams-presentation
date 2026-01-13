@@ -13,6 +13,5 @@ final readonly class CreatePostCommand
         public string $title,
         public string $content,
         public string $authorId
-    ) {
-    }
+    ) {}
 }

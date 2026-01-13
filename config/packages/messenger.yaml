@@ -32,6 +32,9 @@ framework:
             # Comment Queries
             'App\Api\Application\Comment\Query\ListCommentsQuery': sync
 
+            # Translation Queries
+            'App\Api\Application\Translation\Query\GetTranslationsQuery': sync
+
 when@test:
     framework:
         messenger:

@@ -11,6 +11,5 @@ final readonly class ListPostsQuery
 {
     public function __construct(
         public bool $onlyPublished = false
-    ) {
-    }
+    ) {}
 }

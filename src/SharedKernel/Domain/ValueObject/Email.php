@@ -41,7 +41,7 @@ final readonly class Email
 
     private function validate(): void
     {
-        if (!filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
             throw new ValidationException(
                 sprintf('Invalid email format: %s', $this->value)
             );

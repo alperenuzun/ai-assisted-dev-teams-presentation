@@ -9,6 +9,4 @@ namespace App\SharedKernel\Domain\Exception;
  *
  * Thrown when domain validation rules are violated
  */
-class ValidationException extends DomainException
-{
-}
+class ValidationException extends DomainException {}

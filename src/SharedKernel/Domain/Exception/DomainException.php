@@ -9,6 +9,4 @@ namespace App\SharedKernel\Domain\Exception;
  *
  * All domain-specific exceptions should extend this class
  */
-class DomainException extends \DomainException
-{
-}
+class DomainException extends \DomainException {}

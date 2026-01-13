@@ -19,11 +19,17 @@ use App\SharedKernel\Domain\ValueObject\Uuid;
 class Post
 {
     private Uuid $id;
+
     private PostTitle $title;
+
     private PostContent $content;
+
     private PostStatus $status;
+
     private Uuid $authorId;
+
     private CreatedAt $createdAt;
+
     private ?\DateTimeImmutable $publishedAt = null;
 
     private function __construct(
@@ -79,7 +85,7 @@ class Post
         }
 
         $this->status = PostStatus::published();
-        $this->publishedAt = new \DateTimeImmutable();
+        $this->publishedAt = new \DateTimeImmutable;
     }
 
     /**
