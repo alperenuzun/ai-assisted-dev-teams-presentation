@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,4 +38,3 @@ uses(KernelTestCase::class)->in('Unit');
 | global functions to help you to reduce the number of lines of code in your test files.
 |
 */
-

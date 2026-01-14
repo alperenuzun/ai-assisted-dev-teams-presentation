@@ -14,7 +14,9 @@ use App\SharedKernel\Domain\Exception\ValidationException;
 final readonly class PostStatus
 {
     private const STATUS_DRAFT = 'draft';
+
     private const STATUS_PUBLISHED = 'published';
+
     private const STATUS_ARCHIVED = 'archived';
 
     private const VALID_STATUSES = [
@@ -81,7 +83,7 @@ final readonly class PostStatus
 
     private function validate(): void
     {
-        if (!in_array($this->value, self::VALID_STATUSES, true)) {
+        if (! in_array($this->value, self::VALID_STATUSES, true)) {
             throw new ValidationException(
                 sprintf(
                     'Invalid post status: %s. Allowed values: %s',

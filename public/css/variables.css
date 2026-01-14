@@ -3,16 +3,28 @@
   --color-text-default: #030712;
   --color-text-base: #ffffff;
   --color-text-link: #1d4ed8;
+  --color-text-primary: #4338ca;
+  --color-text-caption: #4b5563;
+  --color-text-placeholder: #6b7280;
   
   --color-background-surface: #ffffff;
   --color-background-default: #f3f4f6;
+  --color-background-primary-default: #4338ca;
   --color-background-primary-invert-default: #e0e7ff;
   --color-background-primary-invert-pressed: #a5b4fc;
   --color-background-info-default: #1d4ed8;
+  --color-background-info-invert-default: #dbeafe;
+  --color-background-success-default: #15803d;
+  --color-background-danger-default: #b91c1c;
   --color-background-disabled: #e5e7eb;
+  --color-background-divider: #9ca3af;
+  --color-background-modal: #ffffff;
+  --color-background-default-invert-default: #374151;
   
   --color-border-default: #9ca3af;
   --color-border-primary: #4338ca;
+  --color-border-base: #ffffff;
+  --color-border-success: #15803d;
   
   /* Welcome Section Background (light blue/lavender) */
   --color-welcome-background: #e8eaf6;
@@ -36,6 +48,7 @@
   --font-size-lg: 18px;
   --font-size-base: 16px;
   --font-size-sm: 14px;
+  --font-size-xs: 12px;
   
   /* Font Weights */
   --font-weight-regular: 400;
@@ -48,18 +61,23 @@
   --line-height-4xl: 40px;
   --line-height-3xl: 36px;
   --line-height-2xl: 32px;
+  --line-height-xl: 28px;
   --line-height-lg: 28px;
   --line-height-base: 24px;
   --line-height-sm: 20px;
+  --line-height-xs: 16px;
   
   /* Spacing */
+  --spacing-0-5: 2px;
   --spacing-1: 4px;
   --spacing-1-5: 6px;
   --spacing-2: 8px;
   --spacing-2-5: 10px;
+  --spacing-3: 12px;
   --spacing-4: 16px;
   --spacing-6: 24px;
   --spacing-8: 32px;
+  --spacing-10: 40px;
   --spacing-12: 48px;
   --spacing-16: 64px;
   --spacing-24: 96px;
@@ -70,17 +88,29 @@
   --border-radius-default: 4px;
   --border-radius-md: 8px;
   --border-radius-lg: 10px;
+  --border-radius-modal: 8px;
   --border-radius-full: 9999px;
   
   /* Border Width */
   --border-width-default: 1px;
   
   /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
   --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 4px -2px rgba(0, 0, 0, 0.1), 0 4px 4px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --shadow-card-hover: 0 8px 12px rgba(0, 0, 0, 0.15);
   
+  /* Sizes */
+  --size-9: 36px;
+  --size-10: 40px;
+  --size-24: 96px;
+  --size-32: 128px;
+  --size-60: 240px;
+  --size-64: 256px;
+  
   /* Container */
-  --container-max-width: 1200px;
+  --container-max-width: 1344px;
   --container-padding: var(--spacing-6);
   
   /* Breakpoints */

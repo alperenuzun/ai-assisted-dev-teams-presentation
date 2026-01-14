@@ -30,6 +30,16 @@ security:
             stateless: true
             security: false
 
+        api_translations:
+            pattern: ^/api/translations
+            stateless: true
+            security: false
+
+        api_stage:
+            pattern: ^/api/stage
+            stateless: true
+            security: false
+
         api:
             pattern: ^/api
             stateless: true
@@ -50,6 +60,8 @@ security:
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/translations, roles: PUBLIC_ACCESS }
+        - { path: ^/api/stage, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }

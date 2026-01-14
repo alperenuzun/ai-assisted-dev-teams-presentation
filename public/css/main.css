@@ -163,6 +163,177 @@ a:hover {
   font-weight: var(--font-weight-regular);
 }
 
+/* Components Page Hero */
+.components-hero {
+  background-color: var(--color-background-surface);
+  padding: var(--spacing-24) 0 var(--spacing-16);
+}
+
+.components-hero__title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-4xl);
+  color: var(--color-text-default);
+  margin-bottom: var(--spacing-6);
+}
+
+.components-hero__description {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-lg);
+  color: var(--color-text-default);
+  max-width: 900px;
+}
+
+/* Components Container */
+.components-container {
+  padding: var(--spacing-6);
+  background-color: var(--color-background-default);
+}
+
+/* How to Use Section */
+.how-to-use {
+  padding: var(--spacing-16) 0;
+}
+
+.how-to-use__header {
+  margin-bottom: var(--spacing-8);
+}
+
+.how-to-use__title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-4xl);
+  color: var(--color-text-default);
+  margin-bottom: var(--spacing-6);
+}
+
+.how-to-use__description {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-lg);
+  color: var(--color-text-default);
+}
+
+.how-to-use__showcase {
+  background-color: var(--color-background-default);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-16);
+  margin-bottom: var(--spacing-8);
+}
+
+.how-to-use__images {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  flex-wrap: wrap;
+}
+
+.how-to-use__image {
+  background-color: var(--color-background-surface);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.how-to-use__image img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.how-to-use__arrow {
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-caption);
+}
+
+.how-to-use__note {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-lg);
+  color: var(--color-text-default);
+}
+
+/* Learn More Section */
+.learn-more {
+  padding: var(--spacing-16) 0;
+}
+
+.learn-more__header {
+  margin-bottom: var(--spacing-6);
+}
+
+.learn-more__title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-4xl);
+  color: var(--color-text-default);
+  margin-bottom: var(--spacing-6);
+}
+
+.learn-more__description {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-lg);
+  color: var(--color-text-default);
+}
+
+.learn-more__content {
+  display: flex;
+  gap: var(--spacing-12);
+  flex-wrap: wrap;
+  background-color: var(--color-background-default);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-16);
+}
+
+.learn-more__image {
+  flex: 1;
+  min-width: 300px;
+  background-color: var(--color-background-primary-default);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+}
+
+.learn-more__image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.learn-more__logo {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-base);
+}
+
+.learn-more__links {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.learn-more__link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-link);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.learn-more__link:hover {
+  color: var(--color-text-primary);
+}
+
+.learn-more__link-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   h1 {
@@ -185,5 +356,28 @@ a:hover {
   
   .section--hero {
     padding: var(--spacing-16) 0 var(--spacing-12);
+  }
+  
+  .components-hero {
+    padding: var(--spacing-16) 0 var(--spacing-8);
+  }
+  
+  .components-hero__title,
+  .how-to-use__title,
+  .learn-more__title {
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-height-2xl);
+  }
+  
+  .how-to-use__images {
+    flex-direction: column;
+  }
+  
+  .how-to-use__arrow {
+    transform: rotate(90deg);
+  }
+  
+  .learn-more__content {
+    flex-direction: column;
   }
 }

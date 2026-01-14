@@ -1,0 +1,31 @@
+# Turkish validation messages
+validation:
+  required: "Bu alan gereklidir"
+  email: "Bu değer geçerli bir e-posta adresi değil"
+  min_length: "Bu değer çok kısa. En az {{ min }} karakter olmalıdır."
+  max_length: "Bu değer çok uzun. En fazla {{ max }} karakter olmalıdır."
+  uuid: "Bu değer geçerli bir UUID değil"
+  choice: "Seçtiğiniz değer geçerli bir seçenek değil"
+
+post:
+  title:
+    required: "Yazı başlığı gereklidir"
+    min_length: "Yazı başlığı en az 3 karakter olmalıdır"
+    max_length: "Yazı başlığı 255 karakteri geçemez"
+  content:
+    required: "Yazı içeriği gereklidir"
+    min_length: "Yazı içeriği en az 10 karakter olmalıdır"
+  status:
+    invalid: "Yazı durumu 'taslak' veya 'yayınlanmış' olmalıdır"
+
+user:
+  email:
+    required: "E-posta adresi gereklidir"
+    invalid: "Lütfen geçerli bir e-posta adresi girin"
+    already_used: "Bu e-posta adresi zaten kayıtlı"
+  password:
+    required: "Şifre gereklidir"
+    min_length: "Şifre en az 8 karakter olmalıdır"
+    max_length: "Şifre 255 karakteri geçemez"
+  role:
+    invalid: "Kullanıcı rolü 'kullanıcı' veya 'admin' olmalıdır"

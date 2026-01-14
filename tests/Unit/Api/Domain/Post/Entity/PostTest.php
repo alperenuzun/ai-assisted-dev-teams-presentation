@@ -44,7 +44,7 @@ test('cannot publish an already published post', function () {
 
     $post->publish();
 
-    expect(fn() => $post->publish())
+    expect(fn () => $post->publish())
         ->toThrow(DomainException::class, 'Post is already published');
 });
 

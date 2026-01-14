@@ -11,6 +11,5 @@ final readonly class GetPostQuery
 {
     public function __construct(
         public string $postId
-    ) {
-    }
+    ) {}
 }

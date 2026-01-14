@@ -52,3 +52,9 @@ services:
 
     App\Api\Domain\Comment\Repository\CommentRepositoryInterface:
         alias: App\Api\Infrastructure\Persistence\Doctrine\Repository\DoctrineCommentRepository
+
+    # Translation Service
+    App\Api\Application\Translation\Query\GetTranslationsQueryHandler:
+        arguments:
+            $translator: '@translator'
+            $projectDir: '%kernel.project_dir%'

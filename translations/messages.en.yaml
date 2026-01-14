@@ -1,0 +1,59 @@
+# English translations for blog application
+post:
+  created: "Post created successfully"
+  updated: "Post updated successfully"
+  published: "Post published successfully"
+  deleted: "Post deleted successfully"
+  not_found: "Post not found"
+  invalid_status: "Invalid post status"
+  title_required: "Post title is required"
+  content_required: "Post content is required"
+  title_too_short: "Post title must be at least 3 characters long"
+  title_too_long: "Post title must be less than 255 characters"
+
+user:
+  registered: "User registered successfully"
+  updated: "User profile updated successfully"
+  deleted: "User account deleted successfully"
+  not_found: "User not found"
+  already_exists: "User already exists with this email"
+  invalid_role: "Invalid user role"
+  email_required: "Email address is required"
+  password_required: "Password is required"
+  invalid_email: "Invalid email address format"
+
+auth:
+  login_success: "Login successful"
+  logout_success: "Logout successful"
+  invalid_credentials: "Invalid email or password"
+  access_denied: "Access denied"
+  token_expired: "Authentication token has expired"
+  token_invalid: "Invalid authentication token"
+
+error:
+  validation: "Validation failed"
+  unauthorized: "You must be logged in to access this resource"
+  forbidden: "You don't have permission to access this resource"
+  not_found: "The requested resource was not found"
+  server_error: "An internal server error occurred"
+  bad_request: "Bad request - invalid data provided"
+
+api:
+  success: "Operation completed successfully"
+  created: "Resource created successfully"
+  updated: "Resource updated successfully"
+  deleted: "Resource deleted successfully"
+  no_data: "No data available"
+
+common:
+  yes: "Yes"
+  no: "No"
+  ok: "OK"
+  cancel: "Cancel"
+  save: "Save"
+  edit: "Edit"
+  delete: "Delete"
+  create: "Create"
+  update: "Update"
+  search: "Search"
+  loading: "Loading..."

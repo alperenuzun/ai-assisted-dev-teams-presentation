@@ -20,8 +20,7 @@ final readonly class RegisterUserHandler
     public function __construct(
         private UserRepositoryInterface $userRepository,
         private UserPasswordHasherInterface $passwordHasher
-    ) {
-    }
+    ) {}
 
     public function __invoke(RegisterUserCommand $command): string
     {

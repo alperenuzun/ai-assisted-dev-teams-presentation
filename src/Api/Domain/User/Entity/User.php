@@ -16,12 +16,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * Implements Symfony UserInterface for authentication
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     private Uuid $id;
+
     private Email $email;
+
     private string $password;
+
     private UserRole $role;
+
     private CreatedAt $createdAt;
 
     private function __construct(

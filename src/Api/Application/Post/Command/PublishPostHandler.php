@@ -16,14 +16,13 @@ final readonly class PublishPostHandler
 {
     public function __construct(
         private PostRepositoryInterface $postRepository
-    ) {
-    }
+    ) {}
 
     public function __invoke(PublishPostCommand $command): void
     {
         $post = $this->postRepository->findById(Uuid::fromString($command->postId));
 
-        if (!$post) {
+        if (! $post) {
             throw new \RuntimeException('Post not found');
         }
 
