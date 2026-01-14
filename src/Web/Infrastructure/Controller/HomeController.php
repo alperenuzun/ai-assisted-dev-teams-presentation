@@ -15,4 +15,10 @@ class HomeController extends AbstractController
     {
         return $this->render('plus_ui/index.html.twig');
     }
+
+    #[Route('/components', name: 'components', methods: ['GET'])]
+    public function components(): Response
+    {
+        return $this->render('plus_ui/components.html.twig');
+    }
 }
