@@ -28,26 +28,39 @@
   "mcpServers": {
     "atlassian": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-atlassian"],
+      "args": [
+        "-y",
+        "mcp-atlassian@2.1.0"
+      ],
       "env": {
         "ATLASSIAN_SITE_URL": "https://your-company.atlassian.net",
         "ATLASSIAN_USER_EMAIL": "${ATLASSIAN_USER_EMAIL}",
         "ATLASSIAN_API_TOKEN": "${ATLASSIAN_API_TOKEN}"
-      }
+      },
+      "_note": "Previously pointed at '@modelcontextprotocol/server-atlassian', which does not exist on npm (404). Verify the exact env var names this server expects before relying on it; alternatively use Atlassian's own hosted remote MCP server (OAuth, no npx needed) if available on your plan."
     },
     "github": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github@2025.4.8"
+      ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
-      }
+      },
+      "_note": "Version pinned for reproducibility; bump deliberately, don't float on latest via npx -y."
     },
     "figma": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-figma"],
+      "args": [
+        "-y",
+        "figma-developer-mcp@0.13.2",
+        "--stdio"
+      ],
       "env": {
-        "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
-      }
+        "FIGMA_API_KEY": "${FIGMA_ACCESS_TOKEN}"
+      },
+      "_note": "Previously pointed at '@anthropic/mcp-server-figma', which does not exist on npm (404). Swapped for the real community server 'figma-developer-mcp'; confirm its expected env var name (FIGMA_API_KEY) and CLI flags against its README before use."
     }
   },
   "model": "claude-sonnet-4-20250514",

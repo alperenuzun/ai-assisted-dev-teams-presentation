@@ -1,5 +1,14 @@
 # AI Assistant Instructions
 
+> **Changelog (architecture review)**: this file is the generic, multi-IDE "AI Pack"
+> template and had drifted out of sync with the real project — it described a
+> React/TypeScript/Node.js stack while the actual codebase is PHP 8.3 + Symfony 7.3 DDD
+> (see `CLAUDE.md`, the actual single source of truth for Claude Code). An AI agent reading
+> this file instead of `CLAUDE.md` would confidently generate `.tsx` components and Jest
+> tests for a project that has neither. The stack/structure/naming sections below are now
+> corrected to match reality; please keep this file and `CLAUDE.md` in sync going forward,
+> or better, generate this one from `CLAUDE.md` instead of hand-maintaining both.
+
 ## Purpose
 
 This document provides comprehensive instructions for AI assistants working on this project. These guidelines ensure consistency, quality, and alignment with project standards.
@@ -10,12 +19,12 @@ This document provides comprehensive instructions for AI assistants working on t
 
 ### Technology Stack
 
-- **Frontend**: React 18+ with TypeScript
-- **Backend**: Node.js with Express/NestJS
-- **Database**: PostgreSQL/MongoDB
-- **Testing**: Jest, React Testing Library
-- **Build Tools**: Vite/Webpack
-- **Package Manager**: npm/yarn
+- **Backend**: PHP 8.3 (strict types) with Symfony 7.3
+- **Database**: PostgreSQL 16, Doctrine ORM (XML mappings, not annotations)
+- **Testing**: Pest PHP
+- **Package Manager**: Composer
+- **Runtime**: Docker Compose (nginx + php-fpm + postgres), all PHP commands run via
+  `docker exec blog-php ...`
 
 ### Architecture Principles
 
@@ -31,32 +40,41 @@ This document provides comprehensive instructions for AI assistants working on t
 ### General Guidelines
 
 - Follow the coding standards defined in `.ai-pack/shared/context/coding-standards.md`
-- Use TypeScript for type safety
+- Use PHP 8.3 strict types (`declare(strict_types=1)`) for type safety
 - Write self-documenting code with clear naming
 - Keep functions small and focused (max 20-30 lines)
 - Avoid deep nesting (max 3 levels)
 
 ### Naming Conventions
 
-- **Variables/Functions**: camelCase (`getUserData`, `isActive`)
-- **Classes/Interfaces**: PascalCase (`UserService`, `IUserRepository`)
-- **Constants**: UPPER_SNAKE_CASE (`MAX_RETRY_COUNT`, `API_BASE_URL`)
-- **Files**: kebab-case (`user-service.ts`, `api-client.ts`)
-- **Components**: PascalCase (`UserProfile.tsx`, `LoginForm.tsx`)
+- **Methods/Variables**: camelCase (`getUserData`, `isActive`)
+- **Classes/Interfaces**: PascalCase, interfaces suffixed `Interface` (`PostRepositoryInterface`)
+- **Constants**: UPPER_SNAKE_CASE
+- **Files**: match the class name exactly (PSR-4), one class per file (`PostTitle.php`)
+- **Value Objects**: `final readonly class`, named after the domain concept, not the type
+  (`PostTitle`, not `StringValue`)
 
 ### Code Organization
 
 ```
-src/
-├── components/     # React components
-├── services/       # Business logic services
-├── repositories/   # Data access layer
-├── models/         # Domain models and types
-├── utils/          # Utility functions
-├── hooks/          # Custom React hooks
-├── constants/      # Application constants
-└── tests/          # Test files
+src/{Context}/              # Api | Admin | Web | SharedKernel (bounded contexts)
+├── Domain/
+│   ├── {Aggregate}/
+│   │   ├── Entity/
+│   │   ├── ValueObject/
+│   │   └── Repository/     # interfaces only, no framework/Doctrine code here
+├── Application/
+│   └── {Aggregate}/
+│       ├── Command/        # CQRS writes + handlers
+│       └── Query/          # CQRS reads + handlers
+└── Infrastructure/
+    ├── Controller/
+    └── Persistence/Doctrine/Repository/   # repository implementations
+
+tests/Unit/{Context}/...    # Pest tests mirroring src/ namespaces
 ```
+
+See `CLAUDE.md` for the authoritative, up-to-date version of this structure.
 
 ---
 
@@ -69,14 +87,14 @@ src/
 3. **Write Tests**: Create test cases first (TDD approach)
 4. **Implement**: Write the minimal code to pass tests
 5. **Refactor**: Improve code quality while keeping tests green
-6. **Document**: Add JSDoc comments and update documentation
+6. **Document**: Add PHPDoc comments where types aren't self-evident and update documentation
 7. **Review**: Self-review using the code review checklist
 
 ### Code Review Checklist
 
 - [ ] Code follows project standards and patterns
 - [ ] All tests pass and have good coverage (>80%)
-- [ ] No console.log or debug code left
+- [ ] No `dump()`/`var_dump()`/debug code left
 - [ ] Error handling is comprehensive
 - [ ] Security best practices followed
 - [ ] Performance considerations addressed
@@ -93,7 +111,7 @@ src/
 2. **Consistency**: Match the style of surrounding code
 3. **Completeness**: Provide full implementations, not placeholders
 4. **Testing**: Include tests for all new functionality
-5. **Documentation**: Add JSDoc comments for public APIs
+5. **Documentation**: Add PHPDoc comments for public APIs where return/param types need clarification
 
 ### When Refactoring
 
@@ -273,7 +291,7 @@ describe("FeatureName", () => {
 
 ### Code Comments
 
-- Use JSDoc for all public APIs
+- Use PHPDoc for public APIs where native PHP types aren't sufficient
 - Explain "why" not "what" in comments
 - Keep comments up-to-date with code changes
 - Document complex algorithms
@@ -304,7 +322,7 @@ describe("FeatureName", () => {
 
 ### External Resources
 
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Symfony Documentation](https://symfony.com/doc/current/index.html)
 - [React Documentation](https://react.dev/)
 - [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
 - [Clean Code Principles](https://github.com/ryanmcdermott/clean-code-javascript)
