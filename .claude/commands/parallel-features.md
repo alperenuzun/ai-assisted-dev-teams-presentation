@@ -2,6 +2,16 @@
 
 Develop multiple independent features simultaneously using Git worktrees and parallel agents.
 
+
+> **Changelog (architecture review)**: this command used to be prose-only — it described
+> worktrees and "parallel agents" but nothing actually spawned them, waited for them, or
+> gated a merge on each worktree's own test results. Phase 2 and Phase 4 below now point
+> to a real executable supervisor: `.claude/scripts/run-parallel-agents.sh`. It creates
+> the worktrees, launches one headless `claude -p` session per feature in the background,
+> waits for all of them, runs the test suite per worktree **before** merging anything, and
+> aborts (not silently continues) on merge conflicts or failing tests — leaving the failed
+> worktree intact for manual debugging instead of deleting evidence.
+
 ## Usage
 
 ```
@@ -70,40 +80,21 @@ Expected output:
 
 ## PHASE 2: Launch Parallel Agents
 
-### Agent Configuration
+Run the real supervisor instead of hand-waving "launch agents conceptually":
 
-Each agent receives:
-- **Working Directory**: Its own worktree path
-- **Task**: Generate entity + endpoints
-- **Persona**: Backend Developer Agent
-- **Independence**: No file conflicts possible
-
-### Launch Command (Conceptual)
-
+```bash
+.claude/scripts/run-parallel-agents.sh "Comment,Tag,Category" main
 ```
-Launch 3 agents IN PARALLEL:
 
-Agent 1:
-  - Worktree: feature-comment
-  - Task: /generate-entity Comment Api --fields="content:text,postId:uuid,authorId:uuid"
-          /generate-endpoint POST /api/posts/{postId}/comments Api --entity=Comment
-          /generate-endpoint GET /api/posts/{postId}/comments Api --entity=Comment
-          /run-quality-checks
+What it actually does (see the script for full detail):
 
-Agent 2:
-  - Worktree: feature-tag
-  - Task: /generate-entity Tag Api --fields="name:string,slug:string,color:string"
-          /generate-endpoint GET /api/tags Api --entity=Tag
-          /generate-endpoint POST /api/tags Api --entity=Tag
-          /run-quality-checks
-
-Agent 3:
-  - Worktree: feature-category
-  - Task: /generate-entity Category Api --fields="name:string,slug:string,description:text"
-          /generate-endpoint GET /api/categories Api --entity=Category
-          /generate-endpoint POST /api/categories Api --entity=Category
-          /run-quality-checks
-```
+1. For each feature, starts a **headless Claude Code session** (`claude -p "..." --output-format json`)
+   in the background, `cd`'d into that feature's own worktree, with a prompt that loads the
+   Backend Developer Agent persona and scopes it to that worktree only.
+2. Waits for every background process (`wait "$pid"`) and captures exit codes + full logs
+   under `.claude/state/parallel-logs/`.
+3. Does **not** assume success — a non-zero exit code marks that feature as failed and
+   excludes it from the merge step below.
 
 ### Parallel Execution Flow
 
@@ -114,10 +105,8 @@ Agent 1: [Setup] [Entity] [Endpoints] [Tests] [Commit] ✅
 Agent 2: [Setup] [Entity] [Endpoints] [Tests] [Commit] ✅
 Agent 3: [Setup] [Entity] [Endpoints] [Tests] [Commit] ✅
 
-         └──────────── ALL RUNNING IN PARALLEL ────────────┘
+         └──────────── ALL RUNNING IN PARALLEL (real background processes) ────────────┘
 ```
-
----
 
 ## PHASE 3: Agent Task Details
 
@@ -165,46 +154,28 @@ Agent 3: [Setup] [Entity] [Endpoints] [Tests] [Commit] ✅
 
 ## PHASE 4: Merge & Cleanup
 
-### After All Agents Complete
+The supervisor script also owns this phase (it's one script, not a separate manual step):
 
-1. **Return to main project**:
+1. **Quality gate per worktree, before any merge**: runs `vendor/bin/pest` against each
+   worktree's changes. A worktree that fails its own suite is **excluded from the merge
+   candidates** — it is never merged silently.
+2. **Sequential merge of passing features only**: `git merge --no-ff` one branch at a time.
+   On a merge conflict, the script runs `git merge --abort` immediately and marks that
+   feature as failed rather than leaving the main branch in a conflicted state.
+3. **Worktrees are only removed for features that failed AND whose branch was abandoned**
+   intentionally by a human — the script leaves failed worktrees in place
+   (`{project}-worktrees/feature-*`) so you can `cd` in and debug with full history, instead
+   of deleting the evidence:
    ```bash
-   cd $PROJECT_ROOT
+   # once a failed worktree has been fixed or abandoned:
+   git worktree remove "$WORKTREES_DIR/feature-<slug>"
    ```
-
-2. **Merge each feature branch**:
+4. After merging, regenerate schema/run full suite once more against the merged result:
    ```bash
-   # Merge Comment feature
-   git merge feature/add-comment-entity --no-ff -m "Merge feature/add-comment-entity"
-
-   # Merge Tag feature
-   git merge feature/add-tag-entity --no-ff -m "Merge feature/add-tag-entity"
-
-   # Merge Category feature
-   git merge feature/add-category-entity --no-ff -m "Merge feature/add-category-entity"
-   ```
-
-3. **Handle any schema conflicts**:
-   ```bash
-   # Regenerate schema with all entities
    docker exec blog-php php bin/console doctrine:schema:update --force
-   ```
-
-4. **Run final quality checks**:
-   ```bash
    docker exec blog-php vendor/bin/pest
    docker exec blog-php php bin/console doctrine:schema:validate
    ```
-
-5. **Cleanup worktrees**:
-   ```bash
-   git worktree remove "$WORKTREES_DIR/feature-comment"
-   git worktree remove "$WORKTREES_DIR/feature-tag"
-   git worktree remove "$WORKTREES_DIR/feature-category"
-   rmdir "$WORKTREES_DIR"
-   ```
-
----
 
 ## PHASE 5: Create Combined PR
 

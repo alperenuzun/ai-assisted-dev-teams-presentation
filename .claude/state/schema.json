@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Agent Pipeline State",
+  "description": "Typed handoff/checkpoint state for orchestrator commands (e.g. jira-to-pr). One file per task at .claude/state/{TASK_KEY}.json. Replaces free-text 'Handoff Data' blocks so a crashed/interrupted run can resume from the last completed phase instead of restarting.",
+  "type": "object",
+  "required": ["taskKey", "branch", "currentPhase", "phases"],
+  "properties": {
+    "taskKey": { "type": "string", "description": "e.g. BLOG-123" },
+    "branch": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "currentPhase": {
+      "type": "string",
+      "enum": ["analysis", "implementation", "security_audit", "test_writing", "code_review", "pr_creation", "complete", "blocked"]
+    },
+    "attempts": {
+      "type": "object",
+      "description": "Retry counters per phase, used by the orchestrator's error-handling rules instead of an implicit/untracked retry loop.",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "phases": {
+      "type": "object",
+      "properties": {
+        "analysis": {
+          "type": "object",
+          "properties": {
+            "complete": { "type": "boolean" },
+            "taskType": { "type": "string", "enum": ["feature", "bug", "refactor", "enhancement", "technical_debt"] },
+            "affectedContexts": { "type": "array", "items": { "type": "string", "enum": ["Api", "Admin", "Web", "SharedKernel"] } },
+            "implementationSteps": { "type": "array", "items": { "type": "string" } },
+            "affectedFiles": { "type": "array", "items": { "type": "string" } },
+            "risks": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "implementation": {
+          "type": "object",
+          "properties": {
+            "complete": { "type": "boolean" },
+            "filesCreated": { "type": "array", "items": { "type": "string" } },
+            "filesModified": { "type": "array", "items": { "type": "string" } },
+            "decisionsMade": { "type": "array", "items": { "type": "string" } },
+            "knownIssues": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "security_audit": {
+          "type": "object",
+          "properties": {
+            "complete": { "type": "boolean" },
+            "status": { "type": "string", "enum": ["pass", "pass_with_notes", "blocking_issues"] },
+            "blockingFindings": { "type": "array", "items": { "type": "string" } },
+            "advisoryNotes": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "test_writing": {
+          "type": "object",
+          "properties": {
+            "complete": { "type": "boolean" },
+            "testFiles": { "type": "array", "items": { "type": "string" } },
+            "suiteResult": { "type": "string", "enum": ["pass", "fail", "not_run"] },
+            "coverageGaps": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "code_review": {
+          "type": "object",
+          "properties": {
+            "complete": { "type": "boolean" },
+            "approvalStatus": { "type": "string", "enum": ["approved", "changes_requested"] },
+            "testResults": { "type": "string", "enum": ["pass", "fail"] },
+            "styleCheck": { "type": "string", "enum": ["pass", "fail"] },
+            "reviewSummary": { "type": "string" }
+          }
+        },
+        "pr_creation": {
+          "type": "object",
+          "properties": {
+            "complete": { "type": "boolean" },
+            "prUrl": { "type": "string" },
+            "commitSha": { "type": "string" },
+            "jiraUpdated": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}
